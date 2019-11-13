@@ -47,4 +47,3 @@ where pos= median_pos and median_pos>=3
 
 order by 1,2
 
---select * from [STAGING_2].[dbo].XXX_ITG_Sell_IN_Periods

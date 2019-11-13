@@ -30,7 +30,7 @@ select	SI.r -1 R,
 		SI.Midcategory,
 --		SI.SI_WSE,
 		SI.SI_ITG_WSE,
-		ceiling(SUM(SO.SO_WSE)) SO_WSE
+		ceiling(SUM(SO.SO_WSE)) SO_ITG_WSE
 --		SI.SI_WSE_median,
 --		SI.HI,
 --		SI.std,
