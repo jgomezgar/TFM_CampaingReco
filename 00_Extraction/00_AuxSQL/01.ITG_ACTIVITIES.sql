@@ -58,9 +58,9 @@ group by
 --a12.[Concepto]
 )
 
-, invet_clean as (
-select 
-DIA,
+, invest_clean as (
+select distinct
+DIA, d.CAL_DATE,
 /*	dia_inicio,
 	case when Investment in ('MECHERO','ABP','CLIPPER') then 
 			case when convert(int,convert(varchar(8), dateadd(dd, n_Item/10, CAL_DATE ),112)) > dia_fin then dia_fin else convert(int,convert(varchar(8), dateadd(dd, n_Item/10, CAL_DATE ),112)) end 
@@ -70,7 +70,7 @@ DIA,
 	Customer_ID,
 	BRANDFAMILY_ID,
 	Investment,
-	1 n_Dias
+	1 n_Jornadas
 	--coste 
  from invest i
  join	ITE.T_DAY	d
@@ -83,7 +83,58 @@ where d.CAL_MONTH  >= '201710'
 ) 	
 
 
---select distinct Investment from invet_clean
+--select distinct Investment from invet_clean --DIA,	Customer_ID,	BRANDFAMILY_ID,
+, invest_column as (
+select 	* from invest_clean
+	Pivot ( sum(n_Jornadas) for 
+		Investment in (MECHERO, CLIPPER, ABP, ABP_ESP, DISPENSADOR, DISPENSADOR_ESP, VISIBILIDAD, VISIBILIDAD_ESP ,AZAFATA, TOTEM, TOTEM_ESP, SVM, TFT, CUE))
+	AS tablaPitot
+)
+--where 	MECHERO is not null
 
---select DIA,	Customer_ID,	BRANDFAMILY_ID,	ABP, ABP_ESP, CUE, SVM, TFT, VISIBILIDAD, TOTEM, VISIBILIDAD_ESP, DISPENSADOR_ESP, CLIPPER, AZAFATA, DISPENSADOR, TOTEM_ESP, MECHERO
---order by 2,3,1
+
+select 
+  s.R,
+  s.CAL_DATE,
+  s.CAL_DATE_end,
+  s.CUSTOMER_ID,
+  s.BRANDFAMILY_ID,
+  s.Midcategory,
+  s.SI_ITG_WSE,
+  s.SI_MRKT_WSE,
+  s.SO_ITG_WSE,
+  s.SO_MRKT_WSE,
+  isnull(sum( MECHERO),0)        MECHERO,
+  isnull(sum( CLIPPER),0)        CLIPPER,
+  isnull(sum( ABP),0)            ABP,
+  isnull(sum( ABP_ESP),0)        ABP_ESP,
+  isnull(sum( DISPENSADOR),0)    DISPENSADOR,
+  isnull(sum( DISPENSADOR_ESP),0)DISPENSADOR_ESP,
+  isnull(sum( VISIBILIDAD),0)    VISIBILIDAD,
+  isnull(sum( VISIBILIDAD_ESP),0)VISIBILIDAD_ESP,
+  isnull(sum( AZAFATA),0)        AZAFATA,
+  isnull(sum( TOTEM),0)          TOTEM,
+  isnull(sum( TOTEM_ESP),0)      TOTEM_ESP,
+  isnull(sum( SVM),0)            SVM,
+  isnull(sum( TFT),0)            TFT,
+  isnull(sum( CUE),0)            CUE    
+
+from [STAGING_2].[dbo].XXX_Sell_Periods s 
+left join invest_column i
+  on s.CUSTOMER_ID = i.CUSTOMER_ID
+  and s.BRANDFAMILY_ID = i.BRANDFAMILY_ID
+  and i.CAL_DATE between s.CAL_DATE and s.CAL_DATE_end	
+  
+group by
+  s.R,
+  s.CAL_DATE,
+  s.CAL_DATE_end,
+  s.CUSTOMER_ID,
+  s.BRANDFAMILY_ID,
+  s.Midcategory,
+  s.SI_ITG_WSE,
+  s.SI_MRKT_WSE,
+  s.SO_ITG_WSE,
+  s.SO_MRKT_WSE
+
+
