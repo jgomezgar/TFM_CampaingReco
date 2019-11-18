@@ -58,7 +58,7 @@ group by
 --a12.[Concepto]
 )
 
-
+, invet_clean as (
 select 
 DIA,
 /*	dia_inicio,
@@ -79,5 +79,11 @@ DIA,
 					case when convert(int,convert(varchar(8), dateadd(dd, n_Item/10, i.CAL_DATE ),112)) > dia_fin then dia_fin else convert(int,convert(varchar(8), dateadd(dd, n_Item/10, i.CAL_DATE ),112)) end 
 				 when Investment in ('TFT','SVM') then convert(int,convert(varchar(8),GETDATE()-1 ,112))
 			 else dia_fin end )
-where d.CAL_MONTH  >= '201710'	  	
-order by 2,3,1
+where d.CAL_MONTH  >= '201710'	 
+) 	
+
+
+--select distinct Investment from invet_clean
+
+--select DIA,	Customer_ID,	BRANDFAMILY_ID,	ABP, ABP_ESP, CUE, SVM, TFT, VISIBILIDAD, TOTEM, VISIBILIDAD_ESP, DISPENSADOR_ESP, CLIPPER, AZAFATA, DISPENSADOR, TOTEM_ESP, MECHERO
+--order by 2,3,1
