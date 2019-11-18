@@ -13,7 +13,7 @@ select	SI.r -1 R,
 		SI.Midcategory,
 --		SI.SI_WSE,
 		SI.SI_ITG_WSE,
-		ceiling(SUM([Mrkt_WSE] - SUM(ITG_WSE) + SI.SI_ITG_WSE)) SI_MRKT_WSE
+		ceiling(SUM([Mrkt_WSE]) - SUM(ITG_WSE) + SI.SI_ITG_WSE) SI_MRKT_WSE
    	--    ceiling(SUM(case when SI.BRANDFAMILY_ID =	SO.BRANDFAMILY_ID  then SO.SO_WSE end)) SO_ITG_WSE,
   	 --   ceiling(SUM( SO.SO_WSE)) SO_MRKT_WSE
 
