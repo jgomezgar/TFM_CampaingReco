@@ -39,6 +39,7 @@ select	SI.r -1 R,
 --		SI.HI,
 --		SI.std,
 --		SI.mean
+Into [STAGING_2].[dbo].XXX_Sell_Periods
 from [STAGING_2].[dbo].XXX_ITG_Sell_IN_Periods SI
 join [ITE_PRD].[ITE].[V_FACT_Sales_Target_WSE_Daily] m
 	   on SI.CUSTOMER_ID 	= m.CUSTOMER_ID and
