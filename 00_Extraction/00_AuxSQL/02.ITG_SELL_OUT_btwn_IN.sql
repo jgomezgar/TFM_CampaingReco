@@ -30,15 +30,25 @@ select	SI.r -1 R,
 		SI.Midcategory,
 --		SI.SI_WSE,
 		SI.SI_ITG_WSE,
-		ceiling(SUM(SO.SO_WSE)) SO_ITG_WSE
+		ceiling(SUM([Mrkt_WSE])) SI_MRKT_WSE,
+   	    ceiling(SUM(case when SI.BRANDFAMILY_ID =	SO.BRANDFAMILY_ID  then SO.SO_WSE end)) SO_ITG_WSE,
+  	    ceiling(SUM( SO.SO_WSE)) SO_MRKT_WSE
+
+  	    
 --		SI.SI_WSE_median,
 --		SI.HI,
 --		SI.std,
 --		SI.mean
 from [STAGING_2].[dbo].XXX_ITG_Sell_IN_Periods SI
+join [ITE_PRD].[ITE].[V_FACT_Sales_Target_WSE_Daily] m
+	   on SI.CUSTOMER_ID 	= m.CUSTOMER_ID and
+		  SI.Midcategory =	m.Midcategory and
+		  convert(date,convert(varchar,m.[DIA]),112) >= SI.CAL_DATE and
+		  convert(date,convert(varchar,m.[DIA]),112) < SI.CAL_DATE_end  
 left join [STAGING_2].[dbo].XXX_ITG_Sell_OUT SO 
 	   on SI.CUSTOMER_ID 	= SO.CUSTOMER_ID and
-		  SI.BRANDFAMILY_ID =	SO.BRANDFAMILY_ID and
+		  --SI.BRANDFAMILY_ID =	SO.BRANDFAMILY_ID and
+		  SI.Midcategory =	SO.[SUBCATEGORY] and
 		  SO_DATE > SI.CAL_DATE and
 		  SO_DATE <= SI.CAL_DATE_end  
 
