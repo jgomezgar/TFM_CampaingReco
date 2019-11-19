@@ -53,7 +53,7 @@ from	ITE.LU_CLTE_1CANAL	a11
 	join	ITE.T_PROVINCES	a13
 	  on 	(a12.[PROVINCE_ID] = a13.[PROVINCE_ID])
 	--join	ITE.LU_SEGM_TURISMO	a14
-	--  on 	(Case when substring(a11.[Siebel_Segment],1,2) = 'DO' THEN 'Doméstico' WHEN SUBSTRING(a11.[Siebel_Segment],1,2) = 'TR' THEN 'Travel Retail' ELSE 'ND' END = Case when substring(a14.[SEGM_TURISM_ID],1,2) = 'DO' THEN 'Doméstico' WHEN SUBSTRING(a14.[SEGM_TURISM_ID],1,2) = 'TR' THEN 'Travel Retail' ELSE 'ND' END and 
+	--  on 	(Case when substring(a11.[Siebel_Segment],1,2) = 'DO' THEN 'DomÃ©stico' WHEN SUBSTRING(a11.[Siebel_Segment],1,2) = 'TR' THEN 'Travel Retail' ELSE 'ND' END = Case when substring(a14.[SEGM_TURISM_ID],1,2) = 'DO' THEN 'DomÃ©stico' WHEN SUBSTRING(a14.[SEGM_TURISM_ID],1,2) = 'TR' THEN 'Travel Retail' ELSE 'ND' END and 
 	--	a11.[Siebel_Segment] = a14.[SEGM_TURISM_ID])
 	join multimarcaList m
 		on m.Zona_fortuna_id = a13.[ZONA_FORTUNA] and
