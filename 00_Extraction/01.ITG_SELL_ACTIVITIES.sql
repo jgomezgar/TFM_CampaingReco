@@ -1,3 +1,10 @@
+/*################### 10 min #################################################*/
+
+
+/*#########################################################################*/
+IF OBJECT_ID('[STAGING_2].[dbo].XXX_Sell_y_Activities', 'U') IS NOT NULL
+ DROP TABLE [STAGING_2].[dbo].XXX_Sell_y_Activities;
+
 with multimarcaList as (
 select 	0 Zona_fortuna_id,'DOM' Siebel_Segment, 'BF234103' BrandFamily_id union all 
 select 0, 'DOM',	'BF241049' union all 
@@ -158,10 +165,10 @@ select
   s.CUSTOMER_ID,
   s.BRANDFAMILY_ID,
   s.Midcategory,
-  s.SI_ITG_WSE,
-  s.SI_MRKT_WSE,
-  s.SO_ITG_WSE,
-  s.SO_MRKT_WSE,
+  isnull(s.SI_ITG_WSE,0) SI_ITG_WSE,
+  isnull(s.SI_MRKT_WSE,0) SI_MRKT_WSE,
+  isnull(s.SO_ITG_WSE,0) SO_ITG_WSE,
+  isnull(s.SO_MRKT_WSE,0) SO_MRKT_WSE,
   isnull(sum( MECHERO),0)        MECHERO,
   isnull(sum( CLIPPER),0)        CLIPPER,
   isnull(sum( ABP),0)            ABP,
@@ -176,13 +183,13 @@ select
   isnull(sum( SVM),0)            SVM,
   isnull(sum( TFT),0)            TFT,
   isnull(sum( CUE),0)            CUE    
-
+into [STAGING_2].[dbo].XXX_Sell_y_Activities 
 from [STAGING_2].[dbo].XXX_Sell_Periods s 
 left join invest_column i
   on s.CUSTOMER_ID = i.CUSTOMER_ID
   and s.BRANDFAMILY_ID = i.BRANDFAMILY_ID
   and i.CAL_DATE between s.CAL_DATE and s.CAL_DATE_end	
-  
+ where  S.CAL_DATE  >= '2017-10-01'	 
 group by
   s.R,
   s.CAL_DATE,
