@@ -79,6 +79,8 @@ with Mrkt_Sell_IN_std as (
 					  t.[MIDCATEGORY]= n.[MIDCATEGORY] and
 					  n.CAL_DATE > d.CAL_DATE and
 					  n.CAL_DATE < dateadd(m,2,d.CAL_DATE)
+			where  t.MIDCATEGORY in (N'BLOND', N'RYO') and t.[Mrkt_WSE] > 0
+					  
 		) a
 		where pos= median_pos	
 )
@@ -108,7 +110,7 @@ left join Mrkt_Sell_IN_std  s
 		  t.[CUSTOMER_ID]=s.[CUSTOMER_ID] and  
 	      t.[MIDCATEGORY]= s.[MIDCATEGORY] and
 	      d.CAL_DATE between Date_Start and Date_End
-where  t.MIDCATEGORY in (N'BLOND', N'RYO')
+where  t.MIDCATEGORY in (N'BLOND', N'RYO') and t.[Mrkt_WSE] > 0
 group by-- t.r ,
 	d.CAL_DATE,--p.CAL_DATE,
 	t.[CUSTOMER_ID],
