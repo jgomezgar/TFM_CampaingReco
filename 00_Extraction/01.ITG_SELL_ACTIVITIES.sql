@@ -1,9 +1,65 @@
-with invest as (
+with multimarcaList as (
+select 	0 Zona_fortuna_id,'DOM' Siebel_Segment, 'BF234103' BrandFamily_id union all 
+select 0, 'DOM',	'BF241049' union all 
+select  0, 'DOM',	'BF241151' union all 
+select	1 Zona_fortuna_id,'DOM' Siebel_Segment, 'BF234103' BrandFamily_id union all 
+select 1, 'DOM',	'BF241049' union all 
+select  1, 'DOM',	'BF241151' union all 
+select  0 ,'DOM', 'BF234104' union all 
+select 1 ,'DOM',	'BF231021' union all
+select 0, 'TR 2 BRITANICO', 'BF141002' union all
+select 0, 'TR 2 BRITANICO', 'BF132002' union all
+select 0, 'TR 2 BRITANICO', 'BF132013' union all
+select 0, 'TR 1 FRANCES', 'BF131001' union all
+select 0, 'TR 1 FRANCES', 'BF141038' union all
+select 0, 'TR 2 BRITANICO', 'BF132005' union all
+select 0, 'TR 1 FRANCES', 'BF231084' union all
+select 0, 'TR 1 FRANCES', 'BF241061' union all
+select 0, 'TR 2 BRITANICO', 'BF234110' union all
+select 0, 'TR 2 ALEMAN', 'BF131007' union all
+select 0, 'TR 2 MIXTO', 'BF141002' union all
+select 0, 'TR 2 MIXTO', 'BF132002' union all
+select 0, 'TR 2 MIXTO', 'BF132013' union all
+select 0, 'TR 2 MIXTO', 'BF132005' union all
+select 0, 'TR 2 MIXTO', 'BF234110' union all
+select 1, 'TR 2 BRITANICO', 'BF141002' union all
+select 1, 'TR 2 BRITANICO', 'BF132002' union all
+select 1, 'TR 2 BRITANICO', 'BF132013' union all
+select 1, 'TR 1 FRANCES', 'BF131001' union all
+select 1, 'TR 1 FRANCES', 'BF141038' union all
+select 1, 'TR 2 BRITANICO', 'BF132005' union all
+select 1, 'TR 1 FRANCES', 'BF231084' union all
+select 1, 'TR 1 FRANCES', 'BF241061' union all
+select 1, 'TR 2 BRITANICO', 'BF234110' union all
+select 1, 'TR 2 ALEMAN', 'BF131007' union all
+select 1, 'TR 2 MIXTO', 'BF141002' union all
+select 1, 'TR 2 MIXTO', 'BF132002' union all
+select 1, 'TR 2 MIXTO', 'BF132013' union all
+select 1, 'TR 2 MIXTO', 'BF132005' union all
+select 1, 'TR 2 MIXTO', 'BF234110' )
+
+, MM as (
+select distinct 	a11.[Customer_ID]  Customer_ID, m.BrandFamily_id
+from	ITE.LU_CLTE_1CANAL	a11
+	join	ITE.T_PROVINCES_TR	a12
+	  on 	(a11.[PROVINCE_TR_ID] = a12.[PROVINCE_TR_ID])
+	join	ITE.T_PROVINCES	a13
+	  on 	(a12.[PROVINCE_ID] = a13.[PROVINCE_ID])
+	--join	ITE.LU_SEGM_TURISMO	a14
+	--  on 	(Case when substring(a11.[Siebel_Segment],1,2) = 'DO' THEN 'Doméstico' WHEN SUBSTRING(a11.[Siebel_Segment],1,2) = 'TR' THEN 'Travel Retail' ELSE 'ND' END = Case when substring(a14.[SEGM_TURISM_ID],1,2) = 'DO' THEN 'Doméstico' WHEN SUBSTRING(a14.[SEGM_TURISM_ID],1,2) = 'TR' THEN 'Travel Retail' ELSE 'ND' END and 
+	--	a11.[Siebel_Segment] = a14.[SEGM_TURISM_ID])
+	join multimarcaList m
+		on m.Zona_fortuna_id = a13.[ZONA_FORTUNA] and
+		   m.Siebel_Segment = a11.Siebel_Segment
+	   
+) 
+
+,invest as (
 select	
 a15.[CAL_DATE]  CAL_DATE, 
 dia_inicio , dia_fin,
 a11.[Customer_ID]  Customer_ID,
-a13.[BRANDFAMILY_ID]  BRANDFAMILY_ID,
+case when a13.[BRANDFAMILY_ID] in ('BF999999','BF999998') then MM.BrandFamily_id else a13.BRANDFAMILY_ID end BRANDFAMILY_ID,
 --	a11.[Investment_type]  Investment_type,
 	UPPER(
 	case when CHARINDEX('vending', item) > 0  then 'SVM' 
@@ -25,30 +81,32 @@ from	ITE.Fact_Invest_Actuals_Daily	a11
 	a11.[Item_id] = a12.[Item_id])
 	join	ITE.T_BRANDPACKS	a13
 	  on 	(a11.[BRANDPACK_ID] = a13.[BRANDPACK_ID])
-	join	ITE.LU_SUBCATEGORY	a14
-	  on 	(a13.[SUBCATEGORY] = a14.[SUBCATEGORY])
+--	join	ITE.LU_SUBCATEGORY	a14
+--	  on 	(a13.[SUBCATEGORY] = a14.[SUBCATEGORY])
 	join	ITE.T_DAY	a15
 	  on 	(a15.[DIA] = dia_inicio )--and dia_fin)	
 	join	ITE.V_LU_BRANDFAMILIES	a18
 	  on 	(a13.[BRANDFAMILY_ID] = a18.[BRANDFAMILY_ID])
+	join MM on a11.CUSTOMER_ID = MM.Customer_ID  
 	  
+			
 	  
 	  
 where	--a11.Dia >= 20161000--
 --a15.CAL_MONTH  >= '201710'
-   a14.[Midcategory] in (N'BLOND', N'RYO') and a11.Customer_ID is not null
+   a13.SUBCATEGORY in (N'BLOND', N'RYO') and a11.Customer_ID is not null
  and n_Item > 0
  
 group by	
 	a15.[CAL_DATE], 
 	dia_inicio , dia_fin,
 	a11.[Customer_ID],
-	a13.[BRANDFAMILY_ID],
-		case when CHARINDEX('vending', item) > 0  then 'SVM' 
-			when Item_type = 'abp' OR (CHARINDEX('ABP', a11.Investment_type) > 0  and Item_type not in ('mechero','clipper')) then 'ABP' 
-			when a11.Investment_type IN ('Visibilidad Temporal','Visibilidad Permanente') and Item_type not in ( 'dispensador','totem','tft')  then 'Visibilidad'
-			when a11.Investment_type IN ('CUE')  then a11.Investment_type
-			else  Item_type end
+	case when a13.[BRANDFAMILY_ID] in ('BF999999','BF999998') then MM.BrandFamily_id else a13.BRANDFAMILY_ID end ,
+	case when CHARINDEX('vending', item) > 0  then 'SVM' 
+		when Item_type = 'abp' OR (CHARINDEX('ABP', a11.Investment_type) > 0  and Item_type not in ('mechero','clipper')) then 'ABP' 
+		when a11.Investment_type IN ('Visibilidad Temporal','Visibilidad Permanente') and Item_type not in ( 'dispensador','totem','tft')  then 'Visibilidad'
+		when a11.Investment_type IN ('CUE')  then a11.Investment_type
+		else  Item_type end
 			
 
 
