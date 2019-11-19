@@ -1,4 +1,4 @@
-/***********   2 min *****************/
+/***********   55 min *****************/
 /* 
   [STAGING_2].[dbo].XXX_Mrkt_Sell_IN_neg --> Sell In Negativos, determina SubCategoria&Clitentes a arreglar
   [STAGING_2].[dbo].XXX_Mrket_Sell_IN_ajust  -->Sell In de estancos Sell Out, arreglados los negativos */
