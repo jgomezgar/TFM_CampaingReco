@@ -1,4 +1,4 @@
-/***********   2 min *****************/
+/***********   5 min *****************/
 /* 
   [STAGING_2].[dbo].XXX_Mrkt_Sell_IN_neg --> Sell In Negativos, determina SubCategoria&Clitentes a arreglar
   [STAGING_2].[dbo].XXX_Mrket_Sell_IN_ajust  -->Sell In de estancos Sell Out, arreglados los negativos */
@@ -57,7 +57,12 @@ with Mrkt_Sell_IN_std as (
 				ceiling([Mrkt_WSE]) Mrkt_WSE_median,
 				HI,std, mean
 		from (
-			select t.*, --n.CAL_DATE,n.SI_WSE,
+			select	t.DIA,
+					t.MIDCATEGORY,
+					t.CUSTOMER_ID,
+					ceiling(t.ITG_WSE) ITG_WSE,
+					ceiling(t.Mrkt_WSE) Mrkt_WSE,
+ --n.CAL_DATE,n.SI_WSE,
 						
 				pos = row_number() over (partition by t.[CUSTOMER_ID], t.[MIDCATEGORY], n.CAL_DATE order by t.[Mrkt_WSE]) ,
 				ceiling(max(t.[Mrkt_WSE]) over (partition by  t.[CUSTOMER_ID], t.[MIDCATEGORY],n.CAL_DATE)) HI,
@@ -74,6 +79,8 @@ with Mrkt_Sell_IN_std as (
 					  t.[MIDCATEGORY]= n.[MIDCATEGORY] and
 					  n.CAL_DATE > d.CAL_DATE and
 					  n.CAL_DATE < dateadd(m,2,d.CAL_DATE)
+			where  t.MIDCATEGORY in (N'BLOND', N'RYO') and t.[Mrkt_WSE] > 0 and t.DIA > 20160100
+					  
 		) a
 		where pos= median_pos	
 )
@@ -90,7 +97,7 @@ select  --t.r R,
 	t.[CUSTOMER_ID],
 	t.[MIDCATEGORY],
 	ceiling( t.[Mrkt_WSE]) [Mrkt_WSE],
-	max(case when ceiling( t.[Mrkt_WSE]) = s.HI then Mrkt_WSE_median else t.Mrkt_WSE end) Mrkt_WSE_ajust,
+	max(case when ceiling( t.[Mrkt_WSE]) = s.HI then Mrkt_WSE_median else ceiling(t.Mrkt_WSE) end) Mrkt_WSE_ajust,
 	max(s.Mrkt_WSE_median) Mrkt_WSE_median, 
 	s.HI, 
 	avg(s.std) std, avg(s.mean) mean
@@ -103,6 +110,7 @@ left join Mrkt_Sell_IN_std  s
 		  t.[CUSTOMER_ID]=s.[CUSTOMER_ID] and  
 	      t.[MIDCATEGORY]= s.[MIDCATEGORY] and
 	      d.CAL_DATE between Date_Start and Date_End
+where  t.MIDCATEGORY in (N'BLOND', N'RYO') and t.[Mrkt_WSE] > 0 and t.DIA > 20160100
 group by-- t.r ,
 	d.CAL_DATE,--p.CAL_DATE,
 	t.[CUSTOMER_ID],
