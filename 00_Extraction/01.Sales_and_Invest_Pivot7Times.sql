@@ -1,7 +1,35 @@
+with median as(
+
+select distinct * from (
+select c.[CUSTOMER_ID], c.[BRANDFAMILY_ID], c.[Midcategory], 
+	(DATEDIFF ( dd, CAL_DATE, CAL_DATE_end)) days_btwn_median,
+	AVG(DATEDIFF ( dd, CAL_DATE, c.CAL_DATE_end)) over (partition by  c.[CUSTOMER_ID], c.[BRANDFAMILY_ID]) days_btwn_mean,
+	c.r,
+	pos = row_number() over (partition by c.[CUSTOMER_ID], c.[BRANDFAMILY_ID] order by DATEDIFF ( dd, CAL_DATE, c.CAL_DATE_end) desc ) ,
+	round(0.51* MAX(c.r) over (partition by  c.[CUSTOMER_ID], c.[BRANDFAMILY_ID]),0) median_pos
+from	[STAGING_2].[dbo].XXX_ITG_Sell_IN_Periods c
+) a 
+where pos= median_pos and median_pos>=3
+
+)
+
+, quality as (
+select	a11.[Customer_ID], isnull(a12.[Muestra_so_ok],0) OK_13M, isnull(a13.[Muestra_so_ok],0) OK_15M
+from	ITE.LU_CLTE_1CANAL	a11
+	left join	ITE.V_Lu_Muestra_SO_1Canal_12M	a12
+	  on 	(a11.[Customer_ID] = a12.[Customer_ID])
+	left join	ITE.V_Lu_Muestra_SO_1Canal_15M	a13
+	  on 	(a11.[Customer_ID] = a13.[Customer_ID])
+)
+
 SELECT
 	C0.CUSTOMER_ID,
+	OK_13M,
+	OK_15M,
 	C0.BRANDFAMILY_ID,
 	C0.Midcategory,
+	m.days_btwn_median,
+	m.days_btwn_mean,
 	
 	C0.R R_0,
 	C0.CAL_DATE CAL_DATE_0,
@@ -158,6 +186,12 @@ SELECT
 	C6.CUE CUE_6
 
 from [STAGING_2].[dbo].XXX_Sell_y_Activities C0
+left join median m 
+	on (C0.CUSTOMER_ID = m.CUSTOMER_ID	and
+	 C0.BRANDFAMILY_ID = m.BRANDFAMILY_ID ) 
+left join quality q 
+	on (C0.CUSTOMER_ID = q.CUSTOMER_ID)
+
 
 join [STAGING_2].[dbo].XXX_Sell_y_Activities C1
 	on (C0.CUSTOMER_ID = C1.CUSTOMER_ID	and
