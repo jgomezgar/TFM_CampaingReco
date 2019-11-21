@@ -12,38 +12,23 @@ select
 		then c.POSTALCODE else v.CP end   V_CP,
 	v.CUSTOMER_ID,
 	Subcategory,
---	convert(int,c.POSTALCODE / case when len (v.CP) <> 5 then c.POSTALCODE else v.CP end div,
---	COMPANY,	
     BRANDFAMILY_ID,
-	isnull(ceiling(([ITG_SV_vol])),0) [ITG_SV_vol],
-	ceiling(([Mrkt_SV_vol])) [Mrkt_SV_vol]
+	ceiling([ITG_SV_vol]) [ITG_SV_vol],
+	ceiling([Mrkt_SV_vol]) [Mrkt_SV_vol]
 
 from [STAGING_2].[dbo].XXX_Vending_Sell v 
 join [ITE_PRD].[ITE].[LU_CLTE_1CANAL] c 
   on v.CUSTOMER_ID=c.CUSTOMER_ID
+-- ALISADO DE 3 MESES
 join ITE.V_Transf_MES_MQT1	a13
   on (v.[MES] = a13.[MQT1])
 
-where [ITG_SV_vol] is not null  --and a13.[MES_ID] < 201911 
-/*group by 
-	a13.[MES_ID],
-	SUBSTRING(c.PROVINCE_TR_ID,1,2),
---	v.PROVINCE_ID,
-	c.POSTALCODE,
-	case when 
-		len (v.CP) <> 5 OR 
-		SUBSTRING(v.CP,1,2)<> v.PROVINCE_ID OR
-		SUBSTRING(c.PROVINCE_TR_ID,1,2) <>	v.PROVINCE_ID
-		then c.POSTALCODE else v.CP end,
-	v.CUSTOMER_ID,
-	Subcategory,
---	 SUBSTRING(v.CP,1,2) 
-	--COMPANY,	
-	BRANDFAMILY_ID */
-)
+where [ITG_SV_vol] is not null and a13.[MES_ID] < 201911 
+)  
+
 
 ---#######################################
---, CUSTOMER AS (
+, CUSTOMER AS (
 
 select 
 	MES, 
@@ -74,4 +59,16 @@ select
 			MES, 
 			CP,
 			BRANDFAMILY_ID
-order by 2,1,3
+)
+
+select 
+  MES, 
+  T_PROV,
+  BRANDFAMILY_ID,	
+  sum(ITG_SV_vol) ITG_SV_vol,
+  sum(Mrkt_SV_vol) Mrkt_SV_vol
+from vending
+group by 
+  MES, 
+  T_PROV,
+  BRANDFAMILY_ID
