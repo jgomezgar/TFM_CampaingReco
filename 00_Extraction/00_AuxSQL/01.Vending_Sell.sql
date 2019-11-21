@@ -15,7 +15,7 @@ select	a11.[MES]  MES,
 	a13.[Subcategory]  Subcategory,
 --	case when a17.[COMPANY_ID] in ('CC000003', 'CC000040', 'CC000070', 'CC000074', 'CC000169') then 'ITG' else 'Competence' end [COMPANY],
 	a13.[BRANDFAMILY_ID]  BRANDFAMILY_ID,
-	sum(a11.[Ventas_vol])  [ITG_SV_vol],
+	sum(case when a17.[COMPANY_ID] in ('CC000003', 'CC000040', 'CC000070', 'CC000074', 'CC000169') then a11.[Ventas_vol] end)  [ITG_SV_vol],
 	sum(sum(a11.[Ventas_vol])) over (partition by a11.[MES], a15.[CUSTOMER_ID],a13.[Subcategory]) [Mrkt_SV_vol]
 into [STAGING_2].[dbo].XXX_Vending_Sell
 from	ITE.FACT_SELLOUT_2C_Ventas	a11
@@ -29,8 +29,8 @@ from	ITE.FACT_SELLOUT_2C_Ventas	a11
 	  on 	(a14.[IdEmpresa] = a15.[OPERADOR_ID])
 	join	ITE.V_LU_MAQUINAS_SELLOUT_2C	a16
 	  on 	(a11.[IdMaquina] = a16.[IdMaquina])
---	join	ITE.V_LU_BRANDFAMILIES	a17
---	  on 	(a13.[BRANDFAMILY_ID] = a17.[BRANDFAMILY_ID])
+	join	ITE.V_LU_BRANDFAMILIES	a17
+	  on 	(a13.[BRANDFAMILY_ID] = a17.[BRANDFAMILY_ID])
 --	join	ITE.T_PROVINCES	a19
 --	  on 	(a16.[PROVINCE_ID] = a19.[PROVINCE_ID])
 --	join	ITE.LU_MONTH	a110
