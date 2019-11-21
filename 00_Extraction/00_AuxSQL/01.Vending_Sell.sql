@@ -35,7 +35,7 @@ from	ITE.FACT_SELLOUT_2C_Ventas	a11
 --	  on 	(a16.[PROVINCE_ID] = a19.[PROVINCE_ID])
 --	join	ITE.LU_MONTH	a110
 --	  on 	(a11.[MES] = a110.[MES_id])
-where	(a11.[MES] between '201600' and '201910'
+where	(a11.[MES] between '201710' and '201910'
  and a13.[Subcategory] in (N'Blond'))
 group by	a11.[MES],
 	a16.[PROVINCE_ID],
