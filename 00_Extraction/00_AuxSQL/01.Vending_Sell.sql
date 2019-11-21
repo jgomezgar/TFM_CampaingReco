@@ -16,7 +16,12 @@ select	a11.[MES]  MES,
 --	case when a17.[COMPANY_ID] in ('CC000003', 'CC000040', 'CC000070', 'CC000074', 'CC000169') then 'ITG' else 'Competence' end [COMPANY],
 	a13.[BRANDFAMILY_ID]  BRANDFAMILY_ID,
 	sum(case when a17.[COMPANY_ID] in ('CC000003', 'CC000040', 'CC000070', 'CC000074', 'CC000169') then a11.[Ventas_vol] end)  [ITG_SV_vol],
-	sum(sum(a11.[Ventas_vol])) over (partition by a11.[MES], a15.[CUSTOMER_ID],a13.[Subcategory]) [Mrkt_SV_vol]
+	sum(sum(a11.[Ventas_vol])) over (partition by 
+				a11.[MES] ,
+				a16.[PROVINCE_ID] ,
+				a16.CP,
+				a15.[CUSTOMER_ID],
+				a13.[Subcategory] ) [Mrkt_SV_vol]
 into [STAGING_2].[dbo].XXX_Vending_Sell
 from	ITE.FACT_SELLOUT_2C_Ventas	a11
 	join	ITE.T_PRODUCTS	a12

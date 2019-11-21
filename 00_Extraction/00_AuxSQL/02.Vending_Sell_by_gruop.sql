@@ -1,15 +1,22 @@
 with vending as (
 select 
 	a13.[MES_ID] MES,
-	v.PROVINCE_ID,
-	c.POSTALCODE,
-	v.CP   CP,
+	SUBSTRING(c.PROVINCE_TR_ID,1,2) T_PROV,
+--	v.PROVINCE_ID V_PROV,
+	c.POSTALCODE T_CP,
+--	 SUBSTRING(v.CP,1,2) p,
+	case when 
+		len (v.CP) <> 5 OR 
+		SUBSTRING(v.CP,1,2)<> v.PROVINCE_ID OR
+		SUBSTRING(c.PROVINCE_TR_ID,1,2) <>	v.PROVINCE_ID
+		then c.POSTALCODE else v.CP end   V_CP,
 	v.CUSTOMER_ID,
 	Subcategory,
+--	convert(int,c.POSTALCODE / case when len (v.CP) <> 5 then c.POSTALCODE else v.CP end div,
 --	COMPANY,	
---	case when COMPANY = 'Competence' then COMPANY else  BRANDFAMILY_ID end BRANDFAMILY_ID,
-	ceiling(sum([ITG_SV_vol])) [ITG_SV_vol],
-	ceiling(sum([Mrkt_SV_vol])) [Mrkt_SV_vol]
+    BRANDFAMILY_ID,
+	isnull(ceiling(([ITG_SV_vol])),0) [ITG_SV_vol],
+	ceiling(([Mrkt_SV_vol])) [Mrkt_SV_vol]
 
 from [STAGING_2].[dbo].XXX_Vending_Sell v 
 join [ITE_PRD].[ITE].[LU_CLTE_1CANAL] c 
@@ -17,91 +24,54 @@ join [ITE_PRD].[ITE].[LU_CLTE_1CANAL] c
 join ITE.V_Transf_MES_MQT1	a13
   on (v.[MES] = a13.[MQT1])
 
-where a13.[MES_ID] < 201909
-group by 
+where [ITG_SV_vol] is not null  --and a13.[MES_ID] < 201911 
+/*group by 
 	a13.[MES_ID],
-	v.PROVINCE_ID,
+	SUBSTRING(c.PROVINCE_TR_ID,1,2),
+--	v.PROVINCE_ID,
 	c.POSTALCODE,
-	v.CP,
+	case when 
+		len (v.CP) <> 5 OR 
+		SUBSTRING(v.CP,1,2)<> v.PROVINCE_ID OR
+		SUBSTRING(c.PROVINCE_TR_ID,1,2) <>	v.PROVINCE_ID
+		then c.POSTALCODE else v.CP end,
 	v.CUSTOMER_ID,
 	Subcategory,
-	COMPANY,	
-	case when COMPANY = 'Competence' then COMPANY else  BRANDFAMILY_ID end
+--	 SUBSTRING(v.CP,1,2) 
+	--COMPANY,	
+	BRANDFAMILY_ID */
 )
 
 ---#######################################
-, CUSTOMER AS (
-select 
-	MES,
-	PROVINCE_ID,
-	POSTALCODE,
-	CUSTOMER_ID,
-	Subcategory,
-	COMPANY,	
-	BRANDFAMILY_ID,
-	sum(Ventas_vol) Ventas_vol,
-		nullIf(sum(sum(Ventas_vol)) over (partition by MES,POSTALCODE),0) Ventas_Tot_vol,
-	sum(Ventas_vol) /
-		nullIf(sum(sum(Ventas_vol)) over (partition by MES,POSTALCODE),0) Per_vol
-from vending
-group by 
-	MES,
-	PROVINCE_ID,
-	POSTALCODE,
-	CUSTOMER_ID,
-	Subcategory,
-	COMPANY,	
-	BRANDFAMILY_ID 
+--, CUSTOMER AS (
 
-)
----#######################################
-, POSTALCODE AS (
 select 
-	MES,
---	PROVINCE_ID,
-	POSTALCODE,
-	Subcategory,
-	COMPANY,	
-	BRANDFAMILY_ID,
-	sum(Ventas_vol) Ventas_vol,
-		nullIf(sum(sum(Ventas_vol)) over (partition by MES,POSTALCODE),0) Ventas_Tot_vol,
-	sum(Ventas_vol) /
-		nullIf(sum(sum(Ventas_vol)) over (partition by MES,POSTALCODE),0) Per_vol
-from (
-	select MES,  POSTALCODE, Subcategory,COMPANY,BRANDFAMILY_ID,sum(Ventas_vol) Ventas_vol	from vending
-	WHERE ISNUMERIC (POSTALCODE) = 1
-	group by MES, PROVINCE_ID, POSTALCODE, Subcategory,COMPANY,BRANDFAMILY_ID
-	UNION 
-	select MES,  CP, Subcategory,COMPANY,BRANDFAMILY_ID, sum(Ventas_vol) Ventas_vol	from vending  
-	WHERE ISNUMERIC (CP) = 1  AND CP <> POSTALCODE
-	group by MES, PROVINCE_ID, CP, Subcategory,COMPANY,BRANDFAMILY_ID
+	MES, 
+	CP,
+	BRANDFAMILY_ID,	
+	SUM(ITG_SV_vol) ITG_SV_vol,
+	SUM(Mrkt_SV_vol) Mrkt_SV_vol
+		FROM (
+			select 
+				MES, 
+				T_CP CP,
+				BRANDFAMILY_ID,	
+				(ITG_SV_vol) ITG_SV_vol,
+				(Mrkt_SV_vol) Mrkt_SV_vol
+			from vending
+			where T_CP = V_CP
+		union all
+			select 
+				MES, 
+				V_CP,
+				BRANDFAMILY_ID,	
+				(ITG_SV_vol) ITG_SV_vol,
+				(Mrkt_SV_vol) Mrkt_SV_vol
+			from vending
+			where T_CP <> V_CP
 ) CP
-		
-group by 
-	MES,
---	PROVINCE_ID,
-	POSTALCODE,
-	Subcategory,
-	COMPANY,	
-	BRANDFAMILY_ID
-)
-
-
-
-select 
-	MES,
-	PROVINCE_ID,
-	Subcategory,
-	COMPANY,	
-	BRANDFAMILY_ID,
-	sum(Ventas_vol) Ventas_vol,
-		nullIf(sum(sum(Ventas_vol)) over (partition by MES,PROVINCE_ID),0) Ventas_Tot_vol,
-	sum(Ventas_vol) /
-		nullIf(sum(sum(Ventas_vol)) over (partition by MES,PROVINCE_ID),0) Per_vol
-from vending
-group by 
-	MES,
-	PROVINCE_ID,
-	Subcategory,
-	COMPANY,
-	BRANDFAMILY_ID 
+		group by 
+			MES, 
+			CP,
+			BRANDFAMILY_ID
+order by 2,1,3
