@@ -94,25 +94,28 @@ group by
   BRANDFAMILY_ID
 )
   
-  SELECT c.[Customer_ID],
-  	SUBSTRING(c.PROVINCE_TR_ID,1,2) PROV,
-  	c.POSTALCODE CP,
-  	[Mes_ID],
-  	[Sales2C_num],
-  	[predic2C],
+  SELECT c.name, c.PROVINCE_TR, s.*,
+  --	[Sales2C_num],
+  	1.*[predic2C]/100 [predic2C],
   	clt_VShare,
   	cp_VShare,
   	Prov_VShare
-  FROM [ITE_PRD].[ITE].[LU_CLTE_1CANAL] c
+  FROM [STAGING_2].[dbo].XXX_Sell_Periods s 
+  join [ITE_PRD].[ITE].[LU_CLTE_1CANAL] c
+	on	s.CUSTOMER_ID=c.CUSTOMER_ID 
   left join [STAGING_2].[dbo].[XXX_Vending_Predic_Prop]v
-  on v.CUSTOMER_ID=c.CUSTOMER_ID 
+	on	s.CUSTOMER_ID=v.CUSTOMER_ID and 
+		v.Mes_ID = convert(int,convert(varchar (6), s.CAL_DATE,112))
   left join CLTE 
 	on (c.[Customer_ID] = CLTE.[Customer_ID]
-		and CLTE.MES = v.Mes_ID)	
+		and CLTE.MES = convert(int,convert(varchar (6), s.CAL_DATE,112))
+		and s.BRANDFAMILY_ID = CLTE.BRANDFAMILY_ID)	
   left join CP 
 	on c.POSTALCODE = CP.CP
-	  and CP.MES = v.Mes_ID
+	  and CP.MES = convert(int,convert(varchar (6), s.CAL_DATE,112))
+	  and s.BRANDFAMILY_ID = CP.BRANDFAMILY_ID
   left join PROV 
-	on PROV.PROV=SUBSTRING(c.PROVINCE_TR_ID,1,2)
-		and PROV.MES = v.Mes_ID
-  
+	on	PROV.PROV=SUBSTRING(c.PROVINCE_TR_ID,1,2)
+		and PROV.MES = convert(int,convert(varchar (6), s.CAL_DATE,112))
+		and s.BRANDFAMILY_ID = PROV.BRANDFAMILY_ID
+  where [predic2C] is not null and clt_VShare >0.05
