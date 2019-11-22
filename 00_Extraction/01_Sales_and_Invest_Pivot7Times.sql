@@ -232,6 +232,8 @@ join [STAGING_2].[dbo].XXX_Sell_y_Activities C6
 )
 
 Select c0.*, 
+m.Label, Nombre Label_desc,
+[volume_size] medalla,
 
   C3.R_0  R_3,
   C3.CAL_DATE_0  CAL_DATE_3,
@@ -303,3 +305,9 @@ from p3 c0 join p3 c3
  on (C0.CUSTOMER_ID = C3.CUSTOMER_ID  and
    C0.BRANDFAMILY_ID = C3.BRANDFAMILY_ID and
    C0.R_0 = C3.R_0 -3) 
+left join  [STAGING].[dbo].[xls_estanco_contexto_medalla] m 
+	on c0.customer_id = m.customer_id
+left join [ITE_PRD].[ITE].[LU_Label_segm_Bigdata] c 
+	on m.[label]=c.Label
+
+   
