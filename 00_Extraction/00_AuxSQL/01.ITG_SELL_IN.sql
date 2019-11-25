@@ -1,4 +1,4 @@
-/***********   55 min *****************/
+/***********   10 min *****************/
 /*  RESULT: Datos entrenamiento ventas SellIn 
    [STAGING_2].[dbo].XXX_ITG_Sell_OUT  --> Sell Out WSE y fechas de validec de estancos, delita los erstancos Validos
    [STAGING_2].[dbo].XXX_ITG_Sell_IN --> Sell In Positivos, ventas base

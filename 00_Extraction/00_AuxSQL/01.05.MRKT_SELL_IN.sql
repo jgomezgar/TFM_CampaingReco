@@ -30,11 +30,11 @@ into [STAGING_2].[dbo].XXX_Mrkt_Sell_IN_neg
 from	[ITE_PRD].[ITE].[V_FACT_Sales_Target_WSE_Daily]	a11
 	join	ITE.T_DAY	a12
 	  on 	(a11.[DIA] = a12.[DIA])
-	join   [STAGING_2].[dbo].XXX_ITG_Sell_OUT SO 
-	   on a11.CUSTOMER_ID 	= SO.CUSTOMER_ID and
-		  a11.[MIDCATEGORY] =	SO.SUBCATEGORY and
-		  a12.CAL_DATE between SO_Start and SO_End 
-where	a12.CAL_MONTH >=  '201601' --and 201901
+where	a12.CAL_MONTH >=  '201710' and
+ exists (select 1 from   [STAGING_2].[dbo].XXX_ITG_Sell_OUT SO 
+				   where a11.CUSTOMER_ID 	= SO.CUSTOMER_ID and
+					  a15.BRANDFAMILY_ID =	SO.BRANDFAMILY_ID and
+					  a12.CAL_DATE between SO_Start and SO_End	 )
  and a11.MIDCATEGORY in (N'BLOND', N'RYO')
  and a11.[Mrkt_WSE] < 0
 group by	CAL_DATE,
@@ -79,7 +79,7 @@ with Mrkt_Sell_IN_std as (
 					  t.[MIDCATEGORY]= n.[MIDCATEGORY] and
 					  n.CAL_DATE > d.CAL_DATE and
 					  n.CAL_DATE < dateadd(m,2,d.CAL_DATE)
-			where  t.MIDCATEGORY in (N'BLOND', N'RYO') and t.[Mrkt_WSE] > 0 and t.DIA > 20160100
+			where  t.MIDCATEGORY in (N'BLOND', N'RYO') and t.[Mrkt_WSE] > 0 and t.DIA > 20171000
 					  
 		) a
 		where pos= median_pos	
@@ -110,7 +110,7 @@ left join Mrkt_Sell_IN_std  s
 		  t.[CUSTOMER_ID]=s.[CUSTOMER_ID] and  
 	      t.[MIDCATEGORY]= s.[MIDCATEGORY] and
 	      d.CAL_DATE between Date_Start and Date_End
-where  t.MIDCATEGORY in (N'BLOND', N'RYO') and t.[Mrkt_WSE] > 0 and t.DIA > 20160100
+where  t.MIDCATEGORY in (N'BLOND', N'RYO') and t.[Mrkt_WSE] > 0 and t.DIA > 20171000
 group by-- t.r ,
 	d.CAL_DATE,--p.CAL_DATE,
 	t.[CUSTOMER_ID],
