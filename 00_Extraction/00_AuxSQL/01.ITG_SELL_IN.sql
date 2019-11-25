@@ -97,7 +97,7 @@ group by	CAL_DATE,
 
 
 
-/*#########################################################################*/
+/*################################ 33 min #####################################*/
 IF OBJECT_ID('[STAGING_2].[dbo].XXX_ITG_Sell_IN_Periods', 'U') IS NOT NULL
  DROP TABLE [STAGING_2].[dbo].XXX_ITG_Sell_IN_Periods;
  
@@ -183,6 +183,7 @@ Select
 	s.CUSTOMER_ID,
 	s.BRANDFAMILY_ID,
 	s.Midcategory,
+	sum(s.SI_WSE_ajust - s.SI_WSE) SI_MRKT_ajust,
 	sum(s.SI_WSE_ajust) SI_ITG_WSE
 from ITG_Sell_IN_ajust s
 join sacas_Period p
@@ -209,13 +210,14 @@ group by
 
 
 /*###	Agrupacion de Ventas en sacas
-Agrupoamos todas las ventas sueltas en la saca correspondiente anterior
+Agrupamos todas las ventas sueltas en la saca correspondiente anterior
 */
 select  t.r R,
 	t.CAL_DATE,p.CAL_DATE CAL_DATE_end,
 	t.[CUSTOMER_ID],
 	t.[BRANDFAMILY_ID],
 	t.Midcategory,
+	ceiling( t.SI_MRKT_ajust) SI_MRKT_ajust,
 	ceiling( t.SI_ITG_WSE) SI_ITG_WSE
 into [STAGING_2].[dbo].XXX_ITG_Sell_IN_Periods
 from ITG_Sell_IN_top t
@@ -228,7 +230,8 @@ group by t.r ,
 	t.[CUSTOMER_ID],
 	t.[BRANDFAMILY_ID],
 	t.Midcategory,
-	ceiling(t.SI_ITG_WSE)
+	ceiling(t.SI_ITG_WSE),
+	ceiling( t.SI_MRKT_ajust)
 	            
  order by 	t.CUSTOMER_ID,	t.BRANDFAMILY_ID, t.CAL_DATE
 

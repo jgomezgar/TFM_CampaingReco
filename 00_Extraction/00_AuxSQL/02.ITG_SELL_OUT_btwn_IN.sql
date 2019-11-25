@@ -14,7 +14,7 @@ select	SI.r -1 R,
 		SI.BRANDFAMILY_ID,
 		SI.Midcategory,
 		SI.SI_ITG_WSE,
-		ceiling(SUM(Mrkt_WSE_ajust)) SI_MRKT_WSE
+		ceiling(SUM(Mrkt_WSE_ajust + SI.SI_MRKT_ajust)) SI_MRKT_WSE
 
 Into [STAGING_2].[dbo].XXX_Sell_IN_Periods
 from [STAGING_2].[dbo].XXX_ITG_Sell_IN_Periods SI
