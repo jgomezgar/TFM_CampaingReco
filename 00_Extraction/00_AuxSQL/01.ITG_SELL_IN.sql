@@ -30,7 +30,7 @@ from	ITE_PRD.ITE.Fact_SO_Logista_smld_Custproduct	a11
 	  on 	(a13.[CATEGORY] = a110.[CATEGORY] and 
 			a13.[EXPANDED] = a110.[EXPANDED] and 
 			a13.[PACKTYPE] = a110.[PACKTYPE])
-where a16.CAL_MONTH >=  '201601'
+where a16.CAL_MONTH >=  '201710'
   and a13.[SUBCATEGORY] in (N'BLOND', N'RYO')
 group by a16.[CAL_DATE],
 		 a11.[CUSTOMER_ID],
@@ -54,11 +54,11 @@ from	ITE.FACT_SMLD_Smoke_ITG	a11
 	  on 	(a11.[SALESDATE] = a12.[CAL_DAY])
 	join	ITE.T_BRANDPACKS	a15
 	  on 	(a11.[BRANDPACK_ID] = a15.[BRANDPACK_ID] )
-	join   [STAGING_2].[dbo].XXX_ITG_Sell_OUT SO 
-	   on a11.CUSTOMER_ID 	= SO.CUSTOMER_ID and
-		  a15.BRANDFAMILY_ID =	SO.BRANDFAMILY_ID and
-		  a12.CAL_DATE between SO_Start and SO_End
-where	a12.CAL_MONTH >=  '201601' --and 201901
+where	a12.CAL_MONTH >=  '201710' and
+ exists (select 1 from   [STAGING_2].[dbo].XXX_ITG_Sell_OUT SO 
+				   where a11.CUSTOMER_ID 	= SO.CUSTOMER_ID and
+					  a15.BRANDFAMILY_ID =	SO.BRANDFAMILY_ID and
+					  a12.CAL_DATE between SO_Start and SO_End	 )
  and a15.SUBCATEGORY in (N'BLOND', N'RYO')
  and a11.[VOL_EQUI] > 0
 group by	CAL_DATE,
@@ -83,11 +83,12 @@ from	ITE.FACT_SMLD_Smoke_ITG	a11
 	  on 	(a11.[SALESDATE] = a12.[CAL_DAY])
 	join	ITE.T_BRANDPACKS	a15
 	  on 	(a11.[BRANDPACK_ID] = a15.[BRANDPACK_ID] )
-	join   [STAGING_2].[dbo].XXX_ITG_Sell_OUT SO 
-	   on a11.CUSTOMER_ID 	= SO.CUSTOMER_ID and
-		  a15.BRANDFAMILY_ID =	SO.BRANDFAMILY_ID and
-		  a12.CAL_DATE between SO_Start and SO_End 
-where	a12.CAL_MONTH >=  '201601' --and 201901
+
+where	a12.CAL_MONTH >=  '201710'  and
+ exists (select 1 from   [STAGING_2].[dbo].XXX_ITG_Sell_OUT SO 
+				   where a11.CUSTOMER_ID 	= SO.CUSTOMER_ID and
+					  a15.BRANDFAMILY_ID =	SO.BRANDFAMILY_ID and
+					  a12.CAL_DATE between SO_Start and SO_End	 )
  and a15.SUBCATEGORY in (N'BLOND', N'RYO')
  and a11.[VOL_EQUI] < 0
 group by	CAL_DATE,
@@ -135,7 +136,8 @@ with ITG_Sell_IN_std as (
 				convert(date, convert(varchar(8),SalesDate),112) SacaDate,
 				r = row_number() over (partition by [CUSTOMER_ID] order by SalesDate desc)
 	from [ITE_PRD].[ITE].[FactLess_CALENDARIO_SACA]
-	where isnull(SalesDate,0)<>0)
+	where isnull(SalesDate,0)<>0 and SalesDate between 20171000 and convert(int, convert(varchar(8),GETDATE()-1,112))
+	)
  
 ,sacas_Period as (
 select s.r, s.Customer_id, s.SacaDIA, n.SacaDIA nextSacaDIA, s.SacaDate, n.SacaDate nextSacaDate
@@ -224,7 +226,7 @@ from ITG_Sell_IN_top t
 	join	ITG_Sell_IN_top p 
 	on   t.[CUSTOMER_ID] = p.[CUSTOMER_ID] and
 		 t.[BRANDFAMILY_ID] = p.[BRANDFAMILY_ID] and
-		 p.r = t.r - 1
+		 t.r = p.r + 1
 group by t.r ,
 	t.CAL_DATE,p.CAL_DATE,
 	t.[CUSTOMER_ID],
