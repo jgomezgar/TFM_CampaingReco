@@ -33,8 +33,9 @@ from	[ITE_PRD].[ITE].[V_FACT_Sales_Target_WSE_Daily]	a11
 where	a12.CAL_MONTH >=  '201710' and
  exists (select 1 from   [STAGING_2].[dbo].XXX_ITG_Sell_OUT SO 
 				   where a11.CUSTOMER_ID 	= SO.CUSTOMER_ID and
-					  a15.BRANDFAMILY_ID =	SO.BRANDFAMILY_ID and
-					  a12.CAL_DATE between SO_Start and SO_End	 )
+					  a11.[MIDCATEGORY] =	SO.SUBCATEGORY 
+					--  a12.CAL_DATE between SO_Start and SO_End	
+					 )
  and a11.MIDCATEGORY in (N'BLOND', N'RYO')
  and a11.[Mrkt_WSE] < 0
 group by	CAL_DATE,
