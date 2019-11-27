@@ -157,6 +157,25 @@ select 	* from invest_clean
 )
 --where 	MECHERO is not null
 
+,visits as (
+select	
+	d.[CAL_DATE]  ,
+--	a11.[ROL]  ROL,
+--	a12.[POSICION_DESC],
+	a11.[Customer_ID],
+	1  visit
+from	ITE.v_FACT_VISITS	a11
+	join	ITE.LU_FUERZA_DE_VENTAS	a12
+	  on 	(a11.[EMP_ID] = a12.[EMP_ID])
+	join	ITE.T_DAY	d
+	  on 	(a11.[DIA] = d.[DIA])
+where	(a11.[DIA] between 20171000 and convert(int, convert(varchar(8),GETDATE()-1,112))
+ and a12.[POSICION_DESC] not in (N'Blu'))
+group by		d.[CAL_DATE]  ,
+--	a11.[ROL] ,
+--	a12.[POSICION_DESC],
+	a11.[Customer_ID]
+)
 
 select 
   s.R,
@@ -182,13 +201,17 @@ select
   sum( isnull(TOTEM_ESP,0))      TOTEM_ESP,
   sum( isnull(SVM,0))            SVM,
   sum( isnull(TFT,0))            TFT,
-  sum( isnull(CUE,0))            CUE    
+  sum( isnull(CUE,0))            CUE,
+  sum( isnull(visit,0))          visit      
 into [STAGING_2].[dbo].XXX_Sell_y_Activities_10d 
 from [STAGING_2].[dbo].XXX_Sell_Periods_10d s 
 left join invest_column i
   on s.CUSTOMER_ID = i.CUSTOMER_ID
   and s.BRANDFAMILY_ID = i.BRANDFAMILY_ID
   and i.CAL_DATE between s.CAL_DATE and s.CAL_DATE_end	
+left join visits v  
+  on s.CUSTOMER_ID = v.CUSTOMER_ID 
+  and v.CAL_DATE between s.CAL_DATE and s.CAL_DATE_end	
  where  S.CAL_DATE  >= '2017-10-01'	 
 group by
   s.R,

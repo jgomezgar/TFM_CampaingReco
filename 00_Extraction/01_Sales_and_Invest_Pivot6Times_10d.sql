@@ -1,19 +1,4 @@
-with median as(
-
-select distinct * from (
-select c.[CUSTOMER_ID], c.[BRANDFAMILY_ID], c.[Midcategory], 
-  (DATEDIFF ( dd, CAL_DATE, CAL_DATE_end)) days_btwn_median,
-  AVG(DATEDIFF ( dd, CAL_DATE, c.CAL_DATE_end)) over (partition by  c.[CUSTOMER_ID], c.[BRANDFAMILY_ID]) days_btwn_mean,
-  c.r,
-  pos = row_number() over (partition by c.[CUSTOMER_ID], c.[BRANDFAMILY_ID] order by DATEDIFF ( dd, CAL_DATE, c.CAL_DATE_end) desc ) ,
-  round(0.51* MAX(c.r) over (partition by  c.[CUSTOMER_ID], c.[BRANDFAMILY_ID]),0) median_pos
-from  [STAGING_2].[dbo].XXX_ITG_Sell_IN_Periods c
-) a 
-where pos= median_pos and median_pos>=3
-
-)
-
-, quality as (
+with quality as (
 select  a11.[Customer_ID], isnull(a12.[Muestra_so_ok],0) OK_13M, isnull(a13.[Muestra_so_ok],0) OK_15M
 from  ITE.LU_CLTE_1CANAL  a11
   left join  ITE.V_Lu_Muestra_SO_1Canal_12M  a12
@@ -55,6 +40,8 @@ SELECT
   C0.SVM SVM_0,
   C0.TFT TFT_0,
   C0.CUE CUE_0,
+  C0.VISIT VISIT_0,
+  
   
   C1.R R_1,
   C1.CAL_DATE CAL_DATE_1,
@@ -77,6 +64,7 @@ SELECT
   C1.SVM SVM_1,
   C1.TFT TFT_1,
   C1.CUE CUE_1 ,
+  C1.VISIT VISIT_1,
   
   C2.R R_2,
   C2.CAL_DATE CAL_DATE_2,
@@ -98,7 +86,9 @@ SELECT
   C2.TOTEM_ESP TOTEM_ESP_2,
   C2.SVM SVM_2,
   C2.TFT TFT_2,
-  C2.CUE CUE_2 /*,
+  C2.CUE CUE_2,
+  C2.VISIT VISIT_2
+ /*,
   
   C3.R R_3,
   C3.CAL_DATE CAL_DATE_3,
@@ -237,8 +227,8 @@ Select
 		C0.OK_15M,
 		C0.BRANDFAMILY_ID,
 		C0.Midcategory,
-		C0.days_btwn_median,
-		C0.days_btwn_mean,
+	--	C0.days_btwn_median,
+	--	C0.days_btwn_mean,
 		m.Label, 
 		Nombre Label_desc,
 		[volume_size] medalla,
@@ -264,6 +254,7 @@ Select
 		C0.SVM_0,
 		C0.TFT_0,
 		C0.CUE_0,
+		C0.VISIT_0,
 
 		C0.R_1,
 		C0.CAL_DATE_1,
@@ -286,7 +277,8 @@ Select
 		C0.SVM_1,
 		C0.TFT_1,
 		C0.CUE_1,
-
+		C0.VISIT_1,
+		
 		C0.R_2,
 		C0.CAL_DATE_2,
 		C0.CAL_DATE_end_2,
@@ -308,8 +300,8 @@ Select
 		C0.SVM_2,
 		C0.TFT_2,
 		C0.CUE_2,
-
-
+		C0.VISIT_2,
+		
 
   C3.R_0  R_3,
   C3.CAL_DATE_0  CAL_DATE_3,
@@ -332,7 +324,8 @@ Select
   C3.SVM_0 SVM_3,
   C3.TFT_0 TFT_3,
   C3.CUE_0 CUE_3,
-  
+  C3.VISIT_0 VISIT_3,
+ 
   C3.R_1 R_4,
   C3.CAL_DATE_1 CAL_DATE_4,
   C3.CAL_DATE_end_1 CAL_DATE_end_4,
@@ -354,7 +347,8 @@ Select
   C3.SVM_1 SVM_4,
   C3.TFT_1 TFT_4,
   C3.CUE_1 CUE_4,
-  
+  C3.VISIT_1 VISIT_4,
+ 
   C3.R_2 R_5,
   C3.CAL_DATE_2 CAL_DATE_5,
   C3.CAL_DATE_end_2 CAL_DATE_end_5,
@@ -375,8 +369,9 @@ Select
   C3.TOTEM_ESP_2 TOTEM_ESP_5,
   C3.SVM_2 SVM_5,
   C3.TFT_2 TFT_5,
-  C3.CUE_2 CUE_5
-
+  C3.CUE_2 CUE_5,
+  C3.VISIT_2 VISIT_5
+ 
 from p3 c0 join p3 c3 
  on (C0.CUSTOMER_ID = C3.CUSTOMER_ID  and
    C0.BRANDFAMILY_ID = C3.BRANDFAMILY_ID and
