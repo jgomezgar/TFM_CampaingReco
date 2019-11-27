@@ -2,8 +2,8 @@
 
 
 /*#########################################################################*/
-IF OBJECT_ID('[STAGING_2].[dbo].XXX_Sell_y_Activities', 'U') IS NOT NULL
- DROP TABLE [STAGING_2].[dbo].XXX_Sell_y_Activities;
+IF OBJECT_ID('[STAGING_2].[dbo].XXX_Sell_y_Activities_10d', 'U') IS NOT NULL
+ DROP TABLE [STAGING_2].[dbo].XXX_Sell_y_Activities_10d;
 
 with multimarcaList as (
 select 	0 Zona_fortuna_id,'DOM' Siebel_Segment, 'BF234103' BrandFamily_id union all 
@@ -183,8 +183,8 @@ select
   sum( isnull(SVM,0))            SVM,
   sum( isnull(TFT,0))            TFT,
   sum( isnull(CUE,0))            CUE    
-into [STAGING_2].[dbo].XXX_Sell_y_Activities 
-from [STAGING_2].[dbo].XXX_Sell_Periods s 
+into [STAGING_2].[dbo].XXX_Sell_y_Activities_10d 
+from [STAGING_2].[dbo].XXX_Sell_Periods_10d s 
 left join invest_column i
   on s.CUSTOMER_ID = i.CUSTOMER_ID
   and s.BRANDFAMILY_ID = i.BRANDFAMILY_ID

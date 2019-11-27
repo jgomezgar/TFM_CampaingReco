@@ -4,7 +4,7 @@
 /*#########################################################################*/
 IF OBJECT_ID('[STAGING_2].[dbo].XXX_Sell_IN_Periods', 'U') IS NOT NULL
  DROP TABLE [STAGING_2].[dbo].XXX_Sell_IN_Periods;
- 
+  
 
  
 select	SI.r -1 R,
