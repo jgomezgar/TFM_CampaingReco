@@ -1,3 +1,9 @@
+/*################### 3 min #################################################*/
+
+
+/*#########################################################################*/
+IF OBJECT_ID('[STAGING_2].[dbo].XXX_Sell_y_Activities_10d', 'U') IS NOT NULL
+ DROP TABLE [STAGING_2].[dbo].XXX_Sell_y_Activities_10d;
 
 with multimarcaList as (
 select 	0 Zona_fortuna_id,'DOM' Siebel_Segment, 'BF234103' BrandFamily_id union all 
@@ -168,7 +174,7 @@ DIA, d.CAL_DATE,
 					case when convert(int,convert(varchar(8), dateadd(dd, [n_packs]/10, i.CAL_DATE ),112)) > dia_fin then dia_fin else convert(int,convert(varchar(8), dateadd(dd, [n_packs]/10, i.CAL_DATE ),112)) end 
 				 when Investment in ('TFT','SVM') then convert(int,convert(varchar(8),GETDATE()-1 ,112))
 			 else dia_fin end )
-where d.CAL_MONTH  between '201710'	 and  '201911'
+where d.CAL_MONTH  >= '201710'	and d.CAL_MONTH < convert(varchar(6),GETDATE()-1,112)
 
 ) 	
 
@@ -226,7 +232,7 @@ select
   sum( isnull(TFT,0))            TFT,
   sum( isnull(CUE,0))            CUE,
   sum( isnull(visit,0))          visit      
---into [STAGING_2].[dbo].XXX_Sell_y_Activities_10d 
+into [STAGING_2].[dbo].XXX_Sell_y_Activities_10d 
 from [STAGING_2].[dbo].XXX_Sell_Periods_10d s 
 left join invest_column i
   on s.CUSTOMER_ID = i.CUSTOMER_ID
