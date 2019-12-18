@@ -34,7 +34,7 @@ from	[ITE_PRD].[ITE].[V_FACT_Sales_Target_WSE_Daily]	a11
 	   on a11.CUSTOMER_ID 	= SO.CUSTOMER_ID and
 		  a11.[MIDCATEGORY] =	SO.SUBCATEGORY and
 		  a12.CAL_DATE between SO_Start and SO_End 
-where	a12.CAL_MONTH >=  '201601' --and 201901
+where	a12.CAL_MONTH >=  '201601' --and 201901 -- --and CAL_MONTH < convert(varchar(6),GETDATE()-1,112)
  and a11.MIDCATEGORY in (N'BLOND', N'RYO')
  and a11.[Mrkt_WSE] < 0
 group by	CAL_DATE,
@@ -92,8 +92,17 @@ provoca que la venta mas alta de los ultimos 2 meses
 se sustituya por la mediana */
 
 
+
+
+
+
 select  --t.r R,
+	row_number() over (partition by t.[CUSTOMER_ID], substring(d.CAL_MONTH,5,2), t.[MIDCATEGORY]
+						order by max(case when ceiling( t.[Mrkt_WSE]) = s.HI then Mrkt_WSE_median else ceiling(t.Mrkt_WSE) end) 
+	) PosMonthSale,
+	Count(*) over (partition by t.[CUSTOMER_ID],t.[MIDCATEGORY], substring(d.CAL_MONTH,5,2)) num,
 	d.CAL_DATE,--p.CAL_DATE CAL_DATE_end,
+	substring(d.CAL_MONTH,5,2) YearMonth,
 	t.[CUSTOMER_ID],
 	t.[MIDCATEGORY],
 	ceiling( t.[Mrkt_WSE]) [Mrkt_WSE],
@@ -116,8 +125,13 @@ group by-- t.r ,
 	t.[CUSTOMER_ID],
 	t.[MIDCATEGORY],
 	ceiling(t.[Mrkt_WSE]) ,
+	substring(d.CAL_MONTH,5,2),
 	s.HI
+	
 
 
 
+
+
+/*#########################################################################*/
 
