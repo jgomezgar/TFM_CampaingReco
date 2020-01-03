@@ -7,7 +7,13 @@ import time
 
 t1 = time.time()
 
-INPUT_UNIFIED = '../../00_Extraction/Data/Sales_and_Invest.csv'
+TESTING = True
+
+
+if TESTING: 
+    INPUT_UNIFIED = '../../00_Extraction/Data/Sales_and_Invest_reducido.csv'
+else:
+    INPUT_UNIFIED = '../../00_Extraction/Data/Sales_and_Invest.csv'
 INPUT_CLUSTERS = '../02_AuxData/Data_Clusters_lavels.csv'
 OUTPUT =  '../Data/merged_sources.h5'
 
@@ -26,7 +32,10 @@ data = data.drop(['Label', 'Label_desc', 'medalla'], axis=1)
 for i in range (0, 6):
     data['QUOTA_SELLIN_'+str(i)] = np.divide(data['SI_ITG_WSE_'+str(i)].astype(np.float)*100, data['SI_MRKT_WSE_'+str(i)].astype(np.float))
     data['QUOTA_SELLOUT_'+str(i)] = np.divide(data['SO_ITG_WSE_'+str(i)].astype(np.float)*100, data['SO_MRKT_WSE_'+str(i)].astype(np.float))
-
+    
+    data['CAL_DATE_'+str(i)] = pd.to_datetime(data['CAL_DATE_'+str(i)])
+    data['CAL_DATE_end_'+str(i)] = pd.to_datetime( data['CAL_DATE_end_'+str(i)])
+    
 """
 # Export the merged data to a csv
 data.to_csv(OUTPUT, sep='|', index=False)
