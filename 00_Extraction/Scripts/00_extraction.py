@@ -1,11 +1,14 @@
+
+# Import the libraries
+
 import pandas as pd
 import numpy as np
 import pyodbc 
 import os 
 from tqdm import tqdm 
-import dask.dataframe as dd
 
-OUTPUT= '../Data/unified_data_prueba.csv'
+
+OUTPUT= '../Data/Sales_and_Invest.csv'
 
 conn = pyodbc.connect('Driver={SQL Server};'
                        'Server=esmz08srdb009.imptobnet.com;'

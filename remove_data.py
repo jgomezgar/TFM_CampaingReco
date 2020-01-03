@@ -17,7 +17,7 @@ module = -1
 
 if module == 0 or module == -1:
     if init.lower() in ['s', 'y', 'si', 'yes']: 
-        os.remove('00_Extraction/Data/unified_data.csv')
+        os.remove('00_Extraction/Data/Sales_and_Invest.csv')
 
 if module == 1 or module == -1:
     if os.path.isfile('01_Preparation/Data/merged_sources.h5'):

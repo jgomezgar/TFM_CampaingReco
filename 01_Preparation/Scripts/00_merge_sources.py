@@ -2,14 +2,13 @@
 # Import the libraries
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import dask.dataframe as dd
 import time
 
 t1 = time.time()
 
-INPUT_UNIFIED = '../../00_Extraction/Data/unified_data.csv'
-INPUT_CLUSTERS = '../Data/pa_pintar_k8.csv'
+INPUT_UNIFIED = '../../00_Extraction/Data/Sales_and_Invest.csv'
+INPUT_CLUSTERS = '../02_AuxData/Data_Clusters_lavels.csv'
 OUTPUT =  '../Data/merged_sources.h5'
 
 # Read unified data and merge with the clusters information
