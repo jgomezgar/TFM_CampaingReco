@@ -2,7 +2,6 @@
 # Import the libraries
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import datetime
 import dask.dataframe as dd
 import time
@@ -72,7 +71,7 @@ for i in inv:
 
 #############################################################################################################
 
-X['SEASON'] = X['CAL_DATE_5'].apply(lambda x: get_season(datetime.datetime.strptime(x, "%Y-%m-%d").month))
+X['SEASON'] = X['CAL_DATE_5'].apply(lambda x: get_season(x.month))
 
 X['SEASON_WINTER'] = X['SEASON'].apply(lambda x: 1 if x == 0 else 0)
 X['SEASON_SPRING'] = X['SEASON'].apply(lambda x: 1 if x == 1 else 0)

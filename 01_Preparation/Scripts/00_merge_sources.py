@@ -7,6 +7,8 @@ import time
 
 t1 = time.time()
 
+
+### TRUE --> Para usar una version reducida de Sales_and_Invest
 TESTING = True
 
 

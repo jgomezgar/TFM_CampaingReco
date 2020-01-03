@@ -2,8 +2,6 @@
 # Import the libraries
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.feature_selection import RFE, RFECV
 import lightgbm as ltb
 import seaborn as sns
 from sklearn.preprocessing import StandardScaler
