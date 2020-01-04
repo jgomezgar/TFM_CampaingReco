@@ -1,3 +1,5 @@
+---### OLD VERSION
+
 /***********   55 min *****************/
 /* 
   [STAGING_2].[dbo].XXX_Mrkt_Sell_IN_neg --> Sell In Negativos, determina SubCategoria&Clitentes a arreglar

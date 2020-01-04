@@ -1,3 +1,5 @@
+---### DEPRECATED - Pasamos a periodos de 10 dias
+
 /* Hasta 9 Ultimas compras de la familia, minimo 5 compras*/
 /*
 with ITG_Sell_IN as (

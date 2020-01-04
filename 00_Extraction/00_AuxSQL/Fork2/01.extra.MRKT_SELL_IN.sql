@@ -1,4 +1,4 @@
--- DETECCION DE OUTLIER
+-- DETECCION DE OUTLIER Mejorada -- Mejora fase 2
 
 --, B_MRKT as (
 select row_number() over (partition by MRKT.[CUSTOMER_ID], MRKT.midcategory order by CAL_DATE) R

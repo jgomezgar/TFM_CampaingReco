@@ -1,3 +1,5 @@
+--- Quality se debe arrastrar desde inicio
+
 with quality as (
 select  a11.[Customer_ID], isnull(a12.[Muestra_so_ok],0) OK_13M, isnull(a13.[Muestra_so_ok],0) OK_15M
 from  ITE.LU_CLTE_1CANAL  a11
