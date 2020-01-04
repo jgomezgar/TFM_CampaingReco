@@ -229,9 +229,9 @@ Select
 		C0.Midcategory,
 	--	C0.days_btwn_median,
 	--	C0.days_btwn_mean,
-		m.Label, 
+		isnull(m.Label, 8) Label,
 		Nombre Label_desc,
-		[volume_size] medalla,
+--		[volume_size] medalla,
 
 		C0.R_0,
 		C0.CAL_DATE_0,
@@ -376,9 +376,9 @@ from p3 c0 join p3 c3
  on (C0.CUSTOMER_ID = C3.CUSTOMER_ID  and
    C0.BRANDFAMILY_ID = C3.BRANDFAMILY_ID and
    C0.R_0 = C3.R_0 -3) 
-left join  [STAGING].[dbo].[xls_estanco_contexto_medalla] m 
+left join  [ITE_PRD].[ITE].[EXT_LU_SEGM_BIGDATA] m 
 	on c0.customer_id = m.customer_id
 left join [ITE_PRD].[ITE].[LU_Label_segm_Bigdata] c 
-	on m.[label]=c.Label
+	on isnull(m.[label],8)=c.Label
 
    
