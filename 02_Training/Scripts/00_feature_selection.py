@@ -5,7 +5,7 @@ import numpy as np
 import lightgbm as ltb
 import seaborn as sns
 from sklearn.preprocessing import StandardScaler
-import dask.dataframe as dd
+#import dask.dataframe as dd
 import time 
 
 t1 = time.time()
@@ -50,7 +50,7 @@ if not selected:
     # Remove features more correlated between them
     correlations = X.corr()
     
-    sns.heatmap(correlations)
+ #   sns.heatmap(correlations)
     
     threshold = 0.95
     ignored_fields = []
