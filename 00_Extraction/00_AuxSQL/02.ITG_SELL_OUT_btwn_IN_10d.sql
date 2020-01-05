@@ -78,6 +78,7 @@ order by SI.CUSTOMER_ID,
 
 
 /*############################## 9 min ########################################*/
+
 IF OBJECT_ID('[STAGING_2].[dbo].XXX_Sell_Periods_10d', 'U') IS NOT NULL
  DROP TABLE [STAGING_2].[dbo].XXX_Sell_Periods_10d;
  
@@ -130,6 +131,32 @@ join ite.T_DAY d
 
 )
 
+,daily_Sell_IN_Periods as (
+
+select	--SI.r -1 R,
+		SI.CAL_DATE,
+		SI.CAL_DATE_end,
+		SI.CUSTOMER_ID,
+		SI.BRANDFAMILY_ID,
+		SI.Midcategory,
+		SI.SI_ITG_WSE,
+		SI.SI_MRKT_WSE,
+		sum(SELLING_DAY) days_btw_order,
+		ceiling(SI.SI_ITG_WSE/sum(SELLING_DAY)) DAILY_SI_ITG_WSE,
+		ceiling(SI.SI_MRKT_WSE/sum(SELLING_DAY)) DAILY_SI_MRKT_WSE
+from [STAGING_2].[dbo].XXX_Sell_IN_Periods SI
+join ite.T_DAY d on d.CAL_DATE between SI.CAL_DATE and	SI.CAL_DATE_end
+group by
+		SI.CAL_DATE,
+		SI.CAL_DATE_end,
+		SI.CUSTOMER_ID,
+		SI.BRANDFAMILY_ID,
+		SI.Midcategory,
+		SI.SI_ITG_WSE,
+		SI.SI_MRKT_WSE
+)
+
+
   
 , Sell_IN_Periods_10d as (
 select	--SI.r -1 R,
@@ -137,14 +164,15 @@ select	--SI.r -1 R,
 		M3.tercio,
 		NUM_SELLING_DAYS,
 		NUM_DAYS,
+		ceiling(avg(days_btw_order)) days_btw_order,
 		M3.init_date CAL_DATE,
 		M3.end_date CAL_DATE_end,
 		SI.CUSTOMER_ID,
 		SI.BRANDFAMILY_ID,
 		SI.Midcategory,
-		ceiling(sum(d.NUM_SELLING_DAYS*SI.SI_ITG_WSE/M3.dias)) SI_ITG_WSE,
-		ceiling(sum(d.NUM_SELLING_DAYS*SI.SI_MRKT_WSE/M3.dias)) SI_MRKT_WSE
-from [STAGING_2].[dbo].XXX_Sell_IN_Periods SI
+		ceiling(sum(d.SELLING_DAY*SI.DAILY_SI_ITG_WSE)) SI_ITG_WSE,
+		ceiling(sum(d.SELLING_DAY*SI.DAILY_SI_MRKT_WSE)) SI_MRKT_WSE
+from daily_Sell_IN_Periods SI
 join ite.T_DAY d on d.CAL_DATE between SI.CAL_DATE and	SI.CAL_DATE_end
 join M3  on M3.CAL_DATE = d.CAL_DATE
 
@@ -165,6 +193,7 @@ select	SI.r -1 R,
 		SI.tercio,
 		SI.NUM_SELLING_DAYS,
 		SI.NUM_DAYS,
+		SI.days_btw_order,
 		SI.CAL_DATE,
 		SI.CAL_DATE_end,
 		SI.CUSTOMER_ID,
@@ -190,6 +219,7 @@ GROUP by
 		SI.tercio,
 		SI.NUM_SELLING_DAYS,
 		SI.NUM_DAYS,
+		SI.days_btw_order,
 		SI.CAL_DATE,
 		SI.CAL_DATE_end,
 		SI.CUSTOMER_ID,
