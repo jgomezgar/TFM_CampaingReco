@@ -77,7 +77,7 @@ order by SI.CUSTOMER_ID,
 		  
 
 
-/*#########################################################################*/
+/*############################## 9 min ########################################*/
 IF OBJECT_ID('[STAGING_2].[dbo].XXX_Sell_Periods_10d', 'U') IS NOT NULL
  DROP TABLE [STAGING_2].[dbo].XXX_Sell_Periods_10d;
  
@@ -100,8 +100,7 @@ select CAL_MONTH, tercio,
 --MAX(CAL_DATE)EN_date,
 case when tercio = 3 then DATEADD(DD,-DAY(MIN(CAL_DATE)) +1, MIN(CAL_DATE)) else MIN(CAL_DATE) end init_date, 
 case when tercio = 1 then  dateadd(dd,-1,convert(date,convert(varchar(6),DATEADD(M,1,MAX(CAL_DATE)),112) + '01',112)) else MAX(CAL_DATE) end end_date,
-SUM(SELLING_DAY) SELLING_DAY,
-COUNT(*) dias
+SUM(SELLING_DAY) NUM_SELLING_DAYS
 from tercio
 group by CAL_MONTH, tercio)
 
@@ -111,34 +110,48 @@ select 	s1.CAL_MONTH,
 	s1.tercio,
 	s1.init_date,
 	dateadd(dd,-1,s2.init_date) end_date,
-	s1.SELLING_DAY,
-	s1.dias
+	s1.NUM_SELLING_DAYS
 from 
 selling_days s1 join selling_days s2 
 on s1.CAL_MONTH = s2.CAL_MONTH and s1.tercio  = s2.tercio +1
 )
 , M3 as (
-select d.CAL_DATE, dec.* from decenas dec join ite.T_DAY d on d.CAL_DATE between init_date and	end_date
+select 
+	d.CAL_DATE, 
+	dec.CAL_MONTH,
+	dec.tercio,
+	dec.init_date,
+	dec.end_date,
+	convert(int,dec.NUM_SELLING_DAYS) NUM_SELLING_DAYS,
+	DATEDIFF(DAY,dec.init_date, dec.end_date)+1 NUM_DAYS
+from decenas dec 
+join ite.T_DAY d 
+ on d.CAL_DATE between init_date and end_date
 
 )
+
   
 , Sell_IN_Periods_10d as (
 select	--SI.r -1 R,
 		RANK() over (partition by SI.CUSTOMER_ID,SI.BRANDFAMILY_ID order by M3.init_date) R,
-		M3.tercio
+		M3.tercio,
+		NUM_SELLING_DAYS,
+		NUM_DAYS,
 		M3.init_date CAL_DATE,
 		M3.end_date CAL_DATE_end,
 		SI.CUSTOMER_ID,
 		SI.BRANDFAMILY_ID,
 		SI.Midcategory,
-		ceiling(sum(d.SELLING_DAY*SI.SI_ITG_WSE/M3.dias)) SI_ITG_WSE,
-		ceiling(sum(d.SELLING_DAY*SI.SI_MRKT_WSE/M3.dias)) SI_MRKT_WSE
+		ceiling(sum(d.NUM_SELLING_DAYS*SI.SI_ITG_WSE/M3.dias)) SI_ITG_WSE,
+		ceiling(sum(d.NUM_SELLING_DAYS*SI.SI_MRKT_WSE/M3.dias)) SI_MRKT_WSE
 from [STAGING_2].[dbo].XXX_Sell_IN_Periods SI
 join ite.T_DAY d on d.CAL_DATE between SI.CAL_DATE and	SI.CAL_DATE_end
 join M3  on M3.CAL_DATE = d.CAL_DATE
 
 group by 		
-		M3.tercio
+		M3.tercio,
+		NUM_SELLING_DAYS,
+		NUM_DAYS,
 		init_date,
 		end_date,
 		SI.CUSTOMER_ID,
@@ -149,7 +162,9 @@ group by
  
  
 select	SI.r -1 R,
-		SI.TERCIO
+		SI.tercio,
+		SI.NUM_SELLING_DAYS,
+		SI.NUM_DAYS,
 		SI.CAL_DATE,
 		SI.CAL_DATE_end,
 		SI.CUSTOMER_ID,
@@ -172,7 +187,9 @@ where  SI.CAL_DATE between SO_Start and SO_End
 
 GROUP by 
 		SI.r,
-		SI.TERCIO
+		SI.tercio,
+		SI.NUM_SELLING_DAYS,
+		SI.NUM_DAYS,
 		SI.CAL_DATE,
 		SI.CAL_DATE_end,
 		SI.CUSTOMER_ID,
