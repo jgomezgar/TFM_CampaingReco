@@ -54,7 +54,7 @@ from	ITE.FACT_SMLD_Smoke_ITG	a11
 	  on 	(a11.[SALESDATE] = a12.[CAL_DAY])
 	join	ITE.T_BRANDPACKS	a15
 	  on 	(a11.[BRANDPACK_ID] = a15.[BRANDPACK_ID] )
-where	a12.CAL_MONTH >=  '201710' and
+where	a12.CAL_MONTH >=  '201709' and
  exists (select 1 from   [STAGING_2].[dbo].XXX_ITG_Sell_OUT SO 
 				   where a11.CUSTOMER_ID 	= SO.CUSTOMER_ID and
 					  a15.BRANDFAMILY_ID =	SO.BRANDFAMILY_ID and
@@ -84,7 +84,7 @@ from	ITE.FACT_SMLD_Smoke_ITG	a11
 	join	ITE.T_BRANDPACKS	a15
 	  on 	(a11.[BRANDPACK_ID] = a15.[BRANDPACK_ID] )
 
-where	a12.CAL_MONTH >=  '201710'  and
+where	a12.CAL_MONTH >=  '201709'  and
  exists (select 1 from   [STAGING_2].[dbo].XXX_ITG_Sell_OUT SO 
 				   where a11.CUSTOMER_ID 	= SO.CUSTOMER_ID and
 					  a15.BRANDFAMILY_ID =	SO.BRANDFAMILY_ID and

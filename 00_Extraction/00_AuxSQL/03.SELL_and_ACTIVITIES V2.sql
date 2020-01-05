@@ -208,8 +208,53 @@ group by		d.[CAL_DATE]  ,
 	a11.[Customer_ID]
 )
 
+
+, Sell_Periods_10d_rich_dates as (
+select 
+	p.R,
+	p.tercio,
+	p.NUM_SELLING_DAYS,
+	p.NUM_DAYS,
+	p.days_btw_order,
+	COUNT(distinct s.cal_date) num_orders,
+	p.CAL_DATE,
+	p.CAL_DATE_end,
+	p.CUSTOMER_ID,
+	p.BRANDFAMILY_ID,
+	p.Midcategory,
+	p.SI_ITG_WSE,
+	p.SI_MRKT_WSE,
+	p.SO_ITG_WSE,
+	p.SO_MRKT_WSE
+from [STAGING_2].[dbo].XXX_Sell_Periods_10d p
+left join [STAGING_2].[dbo].XXX_ITG_Sell_IN s
+		on s.cal_date between p.CAL_DATE and p.CAL_DATE_end
+group by 
+	p.R,
+	p.tercio,
+	p.NUM_SELLING_DAYS,
+	p.NUM_DAYS,
+	p.days_btw_order,
+	p.CAL_DATE,
+	p.CAL_DATE_end,
+	p.CUSTOMER_ID,
+	p.BRANDFAMILY_ID,
+	p.Midcategory,
+	p.SI_ITG_WSE,
+	p.SI_MRKT_WSE,
+	p.SO_ITG_WSE,
+	p.SO_MRKT_WSE
+)
+
+
+
 select 
   s.R,
+	s.tercio,
+	s.NUM_SELLING_DAYS,
+	s.NUM_DAYS,
+	s.days_btw_order,
+	s.num_orders,
   s.CAL_DATE,
   s.CAL_DATE_end,
   s.CUSTOMER_ID,
@@ -233,7 +278,7 @@ select
   sum( isnull(CUE,0))            CUE,
   sum( isnull(visit,0))          visit      
 into [STAGING_2].[dbo].XXX_Sell_y_Activities_10d 
-from [STAGING_2].[dbo].XXX_Sell_Periods_10d s 
+from Sell_Periods_10d_rich_dates s 
 left join invest_column i
   on s.CUSTOMER_ID = i.CUSTOMER_ID
   and s.BRANDFAMILY_ID = i.BRANDFAMILY_ID

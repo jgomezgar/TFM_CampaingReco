@@ -77,7 +77,7 @@ order by SI.CUSTOMER_ID,
 		  
 
 
-/*############################## 9 min ########################################*/
+/*############################## 15 min ########################################*/
 
 IF OBJECT_ID('[STAGING_2].[dbo].XXX_Sell_Periods_10d', 'U') IS NOT NULL
  DROP TABLE [STAGING_2].[dbo].XXX_Sell_Periods_10d;
@@ -87,7 +87,7 @@ with tercio as(
 select *, 
  NTILE(3) OVER (
     PARTITION BY CAL_MONTH
-    ORDER BY CAL_DATE DESC
+    ORDER BY CAL_DATE
 ) tercio
 from ite.T_DAY
 where SELLING_DAY = 1. and
@@ -99,14 +99,14 @@ select CAL_MONTH, tercio,
 --r= rank() over (order by CAL_MONTH, tercio desc),
 --MIN(CAL_DATE)in_date ,
 --MAX(CAL_DATE)EN_date,
-case when tercio = 3 then DATEADD(DD,-DAY(MIN(CAL_DATE)) +1, MIN(CAL_DATE)) else MIN(CAL_DATE) end init_date, 
-case when tercio = 1 then  dateadd(dd,-1,convert(date,convert(varchar(6),DATEADD(M,1,MAX(CAL_DATE)),112) + '01',112)) else MAX(CAL_DATE) end end_date,
+case when tercio = 1 then DATEADD(DD,-DAY(MIN(CAL_DATE)) +1, MIN(CAL_DATE)) else MIN(CAL_DATE) end init_date, 
+case when tercio = 3 then  dateadd(dd,-1,convert(date,convert(varchar(6),DATEADD(M,1,MAX(CAL_DATE)),112) + '01',112)) else MAX(CAL_DATE) end end_date,
 SUM(SELLING_DAY) NUM_SELLING_DAYS
 from tercio
 group by CAL_MONTH, tercio)
 
 , decenas as (
-select * from selling_days s1 where tercio = 1 union all
+select * from selling_days s1 where tercio = 3 union all
 select 	s1.CAL_MONTH,
 	s1.tercio,
 	s1.init_date,
@@ -114,7 +114,7 @@ select 	s1.CAL_MONTH,
 	s1.NUM_SELLING_DAYS
 from 
 selling_days s1 join selling_days s2 
-on s1.CAL_MONTH = s2.CAL_MONTH and s1.tercio  = s2.tercio +1
+on s1.CAL_MONTH = s2.CAL_MONTH and s1.tercio  = s2.tercio -1
 )
 , M3 as (
 select 
