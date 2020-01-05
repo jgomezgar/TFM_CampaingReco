@@ -292,6 +292,11 @@ left join visits v
  where  S.CAL_DATE  >= '2017-10-01'	 
 group by
   s.R,
+	s.tercio,
+	s.NUM_SELLING_DAYS,
+	s.NUM_DAYS,
+	s.days_btw_order,
+	s.num_orders,
   s.CAL_DATE,
   s.CAL_DATE_end,
   s.CUSTOMER_ID,
