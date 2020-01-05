@@ -5,7 +5,7 @@
 IF OBJECT_ID('[STAGING_2].[dbo].XXX_Sell_IN_Periods', 'U') IS NOT NULL
  DROP TABLE [STAGING_2].[dbo].XXX_Sell_IN_Periods;
 
-with tercio as( 
+/*with tercio as( 
 select *, 
  NTILE(3) OVER (
     PARTITION BY CAL_MONTH
@@ -39,7 +39,7 @@ select 	s1.CAL_MONTH,
 from 
 selling_days s1 join selling_days s2
 on s1.CAL_MONTH = s2.CAL_MONTH and s1.tercio  = s2.tercio +1
-)
+) */
 
 
   
@@ -125,6 +125,7 @@ select d.CAL_DATE, dec.* from decenas dec join ite.T_DAY d on d.CAL_DATE between
 , Sell_IN_Periods_10d as (
 select	--SI.r -1 R,
 		RANK() over (partition by SI.CUSTOMER_ID,SI.BRANDFAMILY_ID order by M3.init_date) R,
+		M3.tercio
 		M3.init_date CAL_DATE,
 		M3.end_date CAL_DATE_end,
 		SI.CUSTOMER_ID,
@@ -137,6 +138,7 @@ join ite.T_DAY d on d.CAL_DATE between SI.CAL_DATE and	SI.CAL_DATE_end
 join M3  on M3.CAL_DATE = d.CAL_DATE
 
 group by 		
+		M3.tercio
 		init_date,
 		end_date,
 		SI.CUSTOMER_ID,
@@ -147,6 +149,7 @@ group by
  
  
 select	SI.r -1 R,
+		SI.TERCIO
 		SI.CAL_DATE,
 		SI.CAL_DATE_end,
 		SI.CUSTOMER_ID,
@@ -169,6 +172,7 @@ where  SI.CAL_DATE between SO_Start and SO_End
 
 GROUP by 
 		SI.r,
+		SI.TERCIO
 		SI.CAL_DATE,
 		SI.CAL_DATE_end,
 		SI.CUSTOMER_ID,
