@@ -100,7 +100,7 @@ case when a13.[BRANDFAMILY_ID] in ('BF999999','BF999998') then MM.BrandFamily_id
 from	ITE.Fact_Invest_Actuals_Daily	a11
 	join	ITE.LU_Invest_Items	a12
 	  on 	(a11.[Investment_type] = a12.[Investment_type] and 
-	a11.[Item_id] = a12.[Item_id])
+	         a11.[Item_id] = a12.[Item_id])
 	join	ITE.T_BRANDPACKS	a13
 	  on 	(a11.[BRANDPACK_ID] = a13.[BRANDPACK_ID])
 --	join	ITE.LU_SUBCATEGORY	a14
@@ -249,7 +249,51 @@ group by
 	p.SO_MRKT_WSE
 )
 
+, Sell_Periods_10d_rich_dates_VISITS as (
 
+
+
+select 
+  s.R,
+	s.tercio,
+	s.NUM_SELLING_DAYS,
+	s.NUM_DAYS,
+	s.days_btw_order,
+	s.num_orders,
+  s.CAL_DATE,
+  s.CAL_DATE_end,
+  s.CUSTOMER_ID,
+  s.BRANDFAMILY_ID,
+  s.Midcategory,
+  isnull(s.SI_ITG_WSE,0) SI_ITG_WSE,
+  isnull(s.SI_MRKT_WSE,0) SI_MRKT_WSE,
+  isnull(s.SO_ITG_WSE,0) SO_ITG_WSE,
+  isnull(s.SO_MRKT_WSE,0) SO_MRKT_WSE,
+  isnull(isnull(s.SI_ITG_WSE,0) / nullif(s.SI_MRKT_WSE,0),0) QUOTA_SELLIN,
+  isnull(isnull(s.SO_ITG_WSE,0) / nullif(s.SO_MRKT_WSE,0),0) QUOTA_SELLOUT,
+  sum( isnull(visit,0))          visit      
+from Sell_Periods_10d_rich_dates s 	
+left join visits v  
+  on s.CUSTOMER_ID = v.CUSTOMER_ID 
+  and v.CAL_DATE between s.CAL_DATE and s.CAL_DATE_end	
+ where  S.CAL_DATE  >= '2017-10-01'	 
+group by
+  s.R,
+	s.tercio,
+	s.NUM_SELLING_DAYS,
+	s.NUM_DAYS,
+	s.days_btw_order,
+	s.num_orders,
+  s.CAL_DATE,
+  s.CAL_DATE_end,
+  s.CUSTOMER_ID,
+  s.BRANDFAMILY_ID,
+  s.Midcategory,
+  s.SI_ITG_WSE,
+  s.SI_MRKT_WSE,
+  s.SO_ITG_WSE,
+  s.SO_MRKT_WSE
+)
 
 select 
   s.R,
@@ -281,17 +325,14 @@ select
   sum( isnull(SVM,0))            SVM,
   sum( isnull(TFT,0))            TFT,
   sum( isnull(CUE,0))            CUE,
-  sum( isnull(visit,0))          visit      
+  visit      
 into [STAGING_2].[dbo].XXX_Sell_y_Activities_10d 
-from Sell_Periods_10d_rich_dates s 
+from Sell_Periods_10d_rich_dates_VISITS s 
 left join invest_column i
   on s.CUSTOMER_ID = i.CUSTOMER_ID
   and s.BRANDFAMILY_ID = i.BRANDFAMILY_ID
   and i.CAL_DATE between s.CAL_DATE and s.CAL_DATE_end	
-left join visits v  
-  on s.CUSTOMER_ID = v.CUSTOMER_ID 
-  and v.CAL_DATE between s.CAL_DATE and s.CAL_DATE_end	
- where  S.CAL_DATE  >= '2017-10-01'	 
+where  S.CAL_DATE  >= '2017-10-01'	 
 group by
   s.R,
 	s.tercio,
@@ -307,4 +348,5 @@ group by
   s.SI_ITG_WSE,
   s.SI_MRKT_WSE,
   s.SO_ITG_WSE,
-  s.SO_MRKT_WSE
+  s.SO_MRKT_WSE,
+  visit
