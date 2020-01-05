@@ -229,6 +229,9 @@ select
 from [STAGING_2].[dbo].XXX_Sell_Periods_10d p
 left join [STAGING_2].[dbo].XXX_ITG_Sell_IN s
 		on s.cal_date between p.CAL_DATE and p.CAL_DATE_end
+		and p.CUSTOMER_ID = s.CUSTOMER_ID
+		and p.BRANDFAMILY_ID = s.BRANDFAMILY_ID
+	
 group by 
 	p.R,
 	p.tercio,
