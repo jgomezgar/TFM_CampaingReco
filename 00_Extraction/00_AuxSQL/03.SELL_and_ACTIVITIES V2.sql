@@ -267,6 +267,8 @@ select
   isnull(s.SI_MRKT_WSE,0) SI_MRKT_WSE,
   isnull(s.SO_ITG_WSE,0) SO_ITG_WSE,
   isnull(s.SO_MRKT_WSE,0) SO_MRKT_WSE,
+  isnull(isnull(s.SI_ITG_WSE,0) / nullif(s.SI_MRKT_WSE,0),0) QUOTA_SELLIN,
+  isnull(isnull(s.SO_ITG_WSE,0) / nullif(s.SO_MRKT_WSE,0),0) QUOTA_SELLOUT,
   sum( isnull(MECHERO,0))        MECHERO,
   sum( isnull(CLIPPER,0))        CLIPPER,
   sum( isnull(ABP,0))            ABP,
