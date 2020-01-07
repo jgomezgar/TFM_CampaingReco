@@ -4,12 +4,8 @@ with P3 as (
 
 SELECT
   C0.CUSTOMER_ID,
-  OK_13M,
-  OK_15M,
   C0.BRANDFAMILY_ID,
   C0.Midcategory,
---  m.days_btwn_median,
---  m.days_btwn_mean,
   
     C0.R R_0,
   C0.tercio           tercio_0,
@@ -130,13 +126,6 @@ SELECT
 
 from [STAGING_2].[dbo].XXX_P_Sell_y_Activities_10d C0
 
-/*left join median m 
-  on (C0.CUSTOMER_ID = m.CUSTOMER_ID  and
-   C0.BRANDFAMILY_ID = m.BRANDFAMILY_ID ) */
-left join quality q 
-  on (C0.CUSTOMER_ID = q.CUSTOMER_ID)
-
-
 join [STAGING_2].[dbo].XXX_P_Sell_y_Activities_10d C1
   on (C0.CUSTOMER_ID = C1.CUSTOMER_ID  and
    C0.BRANDFAMILY_ID = C1.BRANDFAMILY_ID and
@@ -155,11 +144,8 @@ Select
 		C0.BRANDFAMILY_ID,
 		BF.NAME [BRANDFAMILY],
 		C0.Midcategory,
-	--	C0.days_btwn_median,
-	--	C0.days_btwn_mean,
 		isnull(m.Label, 8) Label,
 		Nombre Label_desc,
---		[volume_size] medalla,
 
 		C0.R_0,
 		C0.tercio_0,

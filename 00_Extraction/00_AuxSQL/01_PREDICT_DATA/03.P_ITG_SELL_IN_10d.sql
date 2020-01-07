@@ -51,14 +51,11 @@ select *,
 ) tercio
 from ite.T_DAY
 where SELLING_DAY = 1. and
-CAL_MONTH between '201710' and convert(varchar(6),GETDATE()-1,112)
+CAL_MONTH between '201500' and convert(varchar(6),GETDATE()-1,112)
 )
 
 , selling_days as(
 select CAL_MONTH, tercio,
---r= rank() over (order by CAL_MONTH, tercio desc),
---MIN(CAL_DATE)in_date ,
---MAX(CAL_DATE)EN_date,
 case when tercio = 1 then DATEADD(DD,-DAY(MIN(CAL_DATE)) +1, MIN(CAL_DATE)) else MIN(CAL_DATE) end date_init, 
 case when tercio = 3 then  dateadd(dd,-1,convert(date,convert(varchar(6),DATEADD(M,1,MAX(CAL_DATE)),112) + '01',112)) else MAX(CAL_DATE) end date_end,
 SUM(SELLING_DAY) NUM_SELLING_DAYS
@@ -93,7 +90,7 @@ join ite.T_DAY d
 
 ,daily_Sell_IN_Periods as (
 
-select	--SI.r -1 R,
+select	
 		SI.CAL_DATE,
 		SI.CAL_DATE_end,
 		SI.CUSTOMER_ID,
@@ -119,8 +116,8 @@ group by
 
 
   
-select	--SI.r -1 R,
-		RANK() over (partition by SI.CUSTOMER_ID,SI.BRANDFAMILY_ID order by M3.date_init) R,
+select	
+		RANK() over (partition by SI.CUSTOMER_ID,SI.BRANDFAMILY_ID order by M3.date_init)-1 R,
 		M3.tercio,
 		NUM_SELLING_DAYS,
 		NUM_DAYS,
@@ -147,100 +144,3 @@ group by
 		SI.CUSTOMER_ID,
 		SI.BRANDFAMILY_ID,
 		SI.Midcategory
-<<<<<<< HEAD
-=======
-)
-
-
-, Sell_Periods_10d_ITG_SO as (
-select	SI.r -1 R,
-		SI.tercio,
-		SI.NUM_SELLING_DAYS,
-		SI.NUM_DAYS,
-		SI.days_btw_order,
-		SI.CAL_DATE,
-		SI.CAL_DATE_end,
-		SI.CUSTOMER_ID,
-		SI.BRANDFAMILY_ID,
-		SI.Midcategory,
-		SI.SI_ITG_WSE,
-		SI_MRKT_WSE,
-  	ceiling(SUM( SO.SO_WSE)) SO_ITG_WSE
-
-from Sell_IN_Periods_10d SI
-left join [STAGING_2].[dbo].XXX_ITG_Sell_OUT SO 
-	   on SI.CUSTOMER_ID 	= SO.CUSTOMER_ID and
-		  SI.BRANDFAMILY_ID =	SO.[BRANDFAMILY_ID] and
-		  SO_DATE between SI.CAL_DATE and SI.CAL_DATE_end
-where  SI.CAL_DATE between SO_Start and SO_End
-GROUP by 
-		SI.r,
-		SI.tercio,
-		SI.NUM_SELLING_DAYS,
-		SI.NUM_DAYS,
-		SI.days_btw_order,
-		SI.CAL_DATE,
-		SI.CAL_DATE_end,
-		SI.CUSTOMER_ID,
-		SI.BRANDFAMILY_ID,
-		SI.Midcategory,
-		SI.SI_ITG_WSE,
-		SI.SI_MRKT_WSE
-
-)
-		
-, MRKT_SO as (
-	select	
-		a15.[CAL_DATE]  ,
-		a11.[CUSTOMER_ID]  ,
-		a11.[SUBCATEGORY]  Midcategory,
-		sum(a11.[WSE_MRKT])  [WSE_MRKT]
-	from	ITE.V_Fact_SMLD_WSE_SO_MRKT	a11
-		join	ITE.T_DAY	a15
-		  on 	(a11.[DIA] = a15.[DIA])
-	where	a15.CAL_MONTH >=  '201710'
-	  and a11.[SUBCATEGORY] in (N'BLOND', N'RYO')
-	group by	a15.[CAL_DATE],
-		a11.[CUSTOMER_ID],
-		a11.[SUBCATEGORY]
-)
-		
-select	SI.R,
-		SI.tercio,
-		SI.NUM_SELLING_DAYS,
-		SI.NUM_DAYS,
-		SI.days_btw_order,
-		SI.CAL_DATE,
-		SI.CAL_DATE_end,
-		SI.CUSTOMER_ID,
-		SI.BRANDFAMILY_ID,
-		SI.Midcategory,
-		SI.SI_ITG_WSE,
-		SI.SI_MRKT_WSE,
-  		SI.SO_ITG_WSE,
-  		ceiling(SUM( SO.[WSE_MRKT])) SO_MRKT_WSE
-
-Into [STAGING_2].[dbo].XXX_Sell_Periods_10d
-from Sell_Periods_10d_ITG_SO SI
-left join MRKT_SO SO 
-	   on SI.CUSTOMER_ID 	= SO.CUSTOMER_ID and
-		  SI.Midcategory =	SO.Midcategory and
-		  SO.[CAL_DATE] between SI.CAL_DATE and SI.CAL_DATE_end
-
-GROUP by 
-		SI.r,
-		SI.tercio,
-		SI.NUM_SELLING_DAYS,
-		SI.NUM_DAYS,
-		SI.days_btw_order,
-		SI.CAL_DATE,
-		SI.CAL_DATE_end,
-		SI.CUSTOMER_ID,
-		SI.BRANDFAMILY_ID,
-		SI.Midcategory,
-		SI.SI_ITG_WSE,
-		SI.SI_MRKT_WSE,
-		SI.SO_ITG_WSE
-order by SI.CUSTOMER_ID,
-		SI.BRANDFAMILY_ID,
-		SI.CAL_DATE 

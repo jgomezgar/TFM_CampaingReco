@@ -5,46 +5,6 @@
 IF OBJECT_ID('[STAGING_2].[dbo].XXX_Sell_IN_Periods', 'U') IS NOT NULL
  DROP TABLE [STAGING_2].[dbo].XXX_Sell_IN_Periods;
 
-/*with tercio as( 
-select *, 
- NTILE(3) OVER (
-    PARTITION BY CAL_MONTH
-    ORDER BY CAL_DATE DESC
-) tercio
-from ite.T_DAY
-where SELLING_DAY = 1. and
-CAL_MONTH between '201710' and convert(varchar(6),GETDATE()-1,112)
-)
-
-, selling_days as(
-select CAL_MONTH, tercio,
---r= rank() over (order by CAL_MONTH, tercio desc),
---MIN(CAL_DATE)in_date ,
---MAX(CAL_DATE)EN_date,
-case when tercio = 3 then DATEADD(DD,-DAY(MIN(CAL_DATE)) +1, MIN(CAL_DATE)) else MIN(CAL_DATE) end date_init, 
-case when tercio = 1 then  dateadd(dd,-1,convert(date,convert(varchar(6),DATEADD(M,1,MAX(CAL_DATE)),112) + '01',112)) else MAX(CAL_DATE) end date_end,
-SUM(SELLING_DAY) SELLING_DAY,
-COUNT(*) dias
-from tercio
-group by CAL_MONTH, tercio)
-
-, decenas as (
-select * from selling_days s1 where tercio = 1 union all
-select 	s1.CAL_MONTH,
-	s1.tercio,
-	s1.date_init,
-	dateadd(dd,-1,s2.date_init) date_end,
-	s1.SELLING_DAY,
-	s1.dias
-from 
-selling_days s1 join selling_days s2
-on s1.CAL_MONTH = s2.CAL_MONTH and s1.tercio  = s2.tercio +1
-) */
-
-
-  
-
- 
 select	SI.r -1 R,
 		SI.CAL_DATE,
 		SI.CAL_DATE_end,
@@ -162,7 +122,7 @@ group by
   
 , Sell_IN_Periods_10d as (
 select	--SI.r -1 R,
-		RANK() over (partition by SI.CUSTOMER_ID,SI.BRANDFAMILY_ID order by M3.date_init) R,
+		RANK() over (partition by SI.CUSTOMER_ID,SI.BRANDFAMILY_ID order by M3.date_init)-1 R,
 		M3.tercio,
 		NUM_SELLING_DAYS,
 		NUM_DAYS,
@@ -191,7 +151,7 @@ group by
 
 
 , Sell_Periods_10d_ITG_SO as (
-select	SI.r -1 R,
+select	SI.R,
 		SI.tercio,
 		SI.NUM_SELLING_DAYS,
 		SI.NUM_DAYS,

@@ -2,8 +2,8 @@
 
 
 /*#########################################################################*/
-IF OBJECT_ID('[STAGING_2].[dbo].XXX_Sell_y_Activities_10d', 'U') IS NOT NULL
- DROP TABLE [STAGING_2].[dbo].XXX_Sell_y_Activities_10d;
+IF OBJECT_ID('[STAGING_2].[dbo].XXX_P_Sell_y_Activities_10d', 'U') IS NOT NULL
+ DROP TABLE [STAGING_2].[dbo].XXX_P_Sell_y_Activities_10d;
 
 with multimarcaList as (
 select 	0 Zona_fortuna_id,'DOM' Siebel_Segment, 'BF234103' BrandFamily_id union all 
@@ -88,49 +88,35 @@ case when a13.[BRANDFAMILY_ID] in ('BF999999','BF999998') then MM.BrandFamily_id
 	sum(case when a11.Origen = 'Logista' OR a11.[n_Item] < 3 then a11.[n_Item] else 3  end) [n_Item],
 	count(distinct Item_type) distinct_items,
 	sum(a11.[coste]) /ISNULL(max(plex),1)   [coste]
-	
-	/*,
-	
-	
-	count(distinct Item_type) count_distint_item,
-	SUM([n_Item]) sum_num_ITEM,
-	SUM([n_packs]) sum_num_paks,
-	sum(a11.[coste]) */
+
 	
 from	ITE.Fact_Invest_Actuals_Daily	a11
+	join ITE.V_Lu_Muestra_SO_1Canal_15M  q 
+  on (a11.CUSTOMER_ID = q.CUSTOMER_ID 
+  		and isnull(q.[Muestra_so_ok],0)=0)
 	join	ITE.LU_Invest_Items	a12
 	  on 	(a11.[Investment_type] = a12.[Investment_type] and 
 	         a11.[Item_id] = a12.[Item_id])
 	join	ITE.T_BRANDPACKS	a13
 	  on 	(a11.[BRANDPACK_ID] = a13.[BRANDPACK_ID])
---	join	ITE.LU_SUBCATEGORY	a14
---	  on 	(a13.[SUBCATEGORY] = a14.[SUBCATEGORY])
 	join	ITE.T_DAY	a15
 	  on 	(a15.[DIA] = dia_inicio )--and dia_fin)	
---	join	ITE.V_LU_BRANDFAMILIES	a18
---	  on 	(a13.[BRANDFAMILY_ID] = a18.[BRANDFAMILY_ID])
 	left join MM on a11.CUSTOMER_ID = MM.Customer_ID  and 
 	CHARINDEX(MM.multi, a13.[BRANDFAMILY_ID]) > 0	  
 			
 	  
 	  
-where	--a11.Dia >= 20161000--
+where	
 a15.CAL_MONTH  >= '201609' and
    a13.SUBCATEGORY in (N'BLOND', N'RYO') and a11.Customer_ID is not null
- --and n_Item > 0
  
 group by	
 
 a15.[CAL_DATE], 
 dia_inicio , 
 dia_fin,
--- case when a12.Item_type in ('dispensador') then  convert(int,convert(varchar,dateadd(dd,3,a15.[CAL_DATE]),112)) else dia_fin end,
 a11.[Customer_ID],
 case when a13.[BRANDFAMILY_ID] in ('BF999999','BF999998') then MM.BrandFamily_id else a13.BRANDFAMILY_ID end,
---	a11.[Investment_type]  Investment_type,
---	Item_type,
---	a12.[Concepto],
---	a11.Origen,
 	UPPER(
 	case 
 		when (a11.Investment_type = 'ABP' OR Item_type='case') and Item_type not in ('mechero','clipper') then 'ABP' 
@@ -141,32 +127,16 @@ case when a13.[BRANDFAMILY_ID] in ('BF999999','BF999998') then MM.BrandFamily_id
 	case when (a11.Investment_type <> 'ABP' OR Item_type not in ( 'dispensador')) AND a12.[Concepto] <> 'BAU' then '_ESP' else '' end
 	)	
 	
---having count(distinct Item_type) > 3 
 )
 
 , invest_clean as (
 select 
 DIA, d.CAL_DATE,
-/*	dia_inicio,
-	case when Investment in ('MECHERO','ABP','CLIPPER') then 
-			case when convert(int,convert(varchar(8), dateadd(dd, n_Item/10, CAL_DATE ),112)) > dia_fin then dia_fin else convert(int,convert(varchar(8), dateadd(dd, n_Item/10, CAL_DATE ),112)) end 
-			
-		 when Investment in ('Mueble', 'TFT','SVM') then convert(int,convert(varchar(8),GETDATE()-1 ,112))
-		 else dia_fin end  dia_fin,*/
 	Customer_ID,
 	BRANDFAMILY_ID,
 	Investment,
 	case when Investment  in ('TFT','SVM', 'VISIBILIDAD') then distinct_items else 1 end Intensidad
 	
-	   /*ceiling(
-    case when max(CHARINDEX('ABP', a11.Investment_type)) > 0   OR max(Item_type)  in ('mechero','clipper','abp') then   
-			sum(case when a11.Origen = 'Logista' OR a11.[n_packs] < 200 then a11.[n_packs] else 200  end ) 
-		else case when max(Item_type) in ( 'dispensador') then sum(case when a11.Origen = 'Logista' OR a11.[n_Item] < 5 then a11.[n_Item] else 5  end) *40  
-				 else count(distinct Item_type) end 
-		end ) [n_Item],*/
-	
-	
-	--coste 
  from invest i
  join	ITE.T_DAY	d
    on (d.[DIA] between  dia_inicio  and 
@@ -179,23 +149,23 @@ where d.CAL_MONTH  >= '201710'	and d.CAL_MONTH < convert(varchar(6),GETDATE()-1,
 ) 	
 
 
---select distinct Investment from invet_clean --DIA,	Customer_ID,	BRANDFAMILY_ID,
 , invest_column as (
 select 	* from invest_clean
 	Pivot ( sum(Intensidad) for 
 		Investment in (MECHERO, CLIPPER, ABP,DISPENSADOR, VISIBILIDAD, VISIBILIDAD_ESP ,AZAFATA, TOTEM, TOTEM_ESP, SVM, TFT, CUE))
 	AS tablaPitot
 )
---where 	TFT > 1-- is not null
 
 ,visits as (
 select	
 	d.[CAL_DATE]  ,
---	a11.[ROL]  ROL,
---	a12.[POSICION_DESC],
 	a11.[Customer_ID],
 	1  visit
 from	ITE.v_FACT_VISITS	a11
+	join ITE.V_Lu_Muestra_SO_1Canal_15M  q 
+  on (a11.CUSTOMER_ID = q.CUSTOMER_ID 
+  		and isnull(q.[Muestra_so_ok],0)=0)
+
 	join	ITE.LU_FUERZA_DE_VENTAS	a12
 	  on 	(a11.[EMP_ID] = a12.[EMP_ID])
 	join	ITE.T_DAY	d
@@ -203,8 +173,6 @@ from	ITE.v_FACT_VISITS	a11
 where	(a11.[DIA] between 20171000 and convert(int, convert(varchar(8),GETDATE()-1,112))
  and a12.[POSICION_DESC] not in (N'Blu'))
 group by		d.[CAL_DATE]  ,
---	a11.[ROL] ,
---	a12.[POSICION_DESC],
 	a11.[Customer_ID]
 )
 
@@ -224,8 +192,12 @@ select
 	p.Midcategory,
 	p.SI_ITG_WSE,
 	p.SI_MRKT_WSE
-from [STAGING_2].[dbo].XXX_Sell_Periods_10d p
-left join [STAGING_2].[dbo].XXX_ITG_Sell_IN s
+from [STAGING_2].[dbo].XXX_P_Sell_Periods_10d p
+	join ITE.V_Lu_Muestra_SO_1Canal_15M  q 
+  on (p.CUSTOMER_ID = q.CUSTOMER_ID 
+  		and isnull(q.[Muestra_so_ok],0)=0)
+
+left join [STAGING_2].[dbo].XXX_P_ITG_Sell_IN s
 		on s.cal_date between p.CAL_DATE and p.CAL_DATE_end
 		and p.CUSTOMER_ID = s.CUSTOMER_ID
 		and p.BRANDFAMILY_ID = s.BRANDFAMILY_ID
@@ -327,7 +299,7 @@ select
   isnull( sum(1.*TFT)/nullif(s.NUM_DAYS,0),0) PERC_TFT,  
   isnull( sum(1.*CUE)/nullif(s.NUM_DAYS,0),0) PERC_CUE,  
   isnull(visit/nullif(s.NUM_DAYS,0),0) PERC_visit
-into [STAGING_2].[dbo].XXX_Sell_y_Activities_10d 
+into [STAGING_2].[dbo].XXX_P_Sell_y_Activities_10d 
 from Sell_Periods_10d_rich_dates_VISITS s 
 left join invest_column i
   on s.CUSTOMER_ID = i.CUSTOMER_ID
