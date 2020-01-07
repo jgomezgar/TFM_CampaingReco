@@ -326,19 +326,19 @@ select
   sum( isnull(TFT,0))            TFT,
   sum( isnull(CUE,0))            CUE,
   visit,
-  isnull( sum(MECHERO)/nullif(p.NUM_DAYS,0),0) PERC_MECHERO,  
-  isnull( sum(CLIPPER)/nullif(p.NUM_DAYS,0),0) PERC_CLIPPER,  
-  isnull( sum(ABP)/nullif(p.NUM_DAYS,0),0) PERC_ABP,  
-  isnull( sum(DISPENSADOR)/nullif(p.NUM_DAYS,0),0) PERC_DISPENSADOR,  
-  isnull( sum(VISIBILIDAD)/nullif(p.NUM_DAYS,0),0) PERC_VISIBILIDAD,  
-  isnull( sum(VISIBILIDAD_ESP,0))VISIBILIDAD_ESP,
-  isnull( sum(AZAFATA)/nullif(p.NUM_DAYS,0),0) PERC_AZAFATA,  
-  isnull( sum(TOTEM)/nullif(p.NUM_DAYS,0),0) PERC_TOTEM,  
-  isnull( sum(TOTEM_ESP)/nullif(p.NUM_DAYS,0),0) PERC_TOTEM_ESP,  
-  isnull( sum(SVM)/nullif(p.NUM_DAYS,0),0) PERC_SVM,  
-  isnull( sum(TFT)/nullif(p.NUM_DAYS,0),0) PERC_TFT,  
-  isnull( sum(CUE)/nullif(p.NUM_DAYS,0),0) PERC_CUE,  
-  isnull(visit/nullif(p.NUM_DAYS,0),0) PERC_visit
+  1.*isnull( sum(MECHERO)/nullif(s.NUM_DAYS,0),0) PERC_MECHERO,  
+  1.*isnull( sum(CLIPPER)/nullif(s.NUM_DAYS,0),0) PERC_CLIPPER,  
+  1.*isnull( sum(ABP)/nullif(s.NUM_DAYS,0),0) PERC_ABP,  
+  1.*isnull( sum(DISPENSADOR)/nullif(s.NUM_DAYS,0),0) PERC_DISPENSADOR,  
+  1.*isnull( sum(VISIBILIDAD)/nullif(s.NUM_DAYS,0),0) PERC_VISIBILIDAD,  
+  1.*isnull( sum(VISIBILIDAD_ESP)/nullif(s.NUM_DAYS,0),0)PERC_VISIBILIDAD_ESP,
+  1.*isnull( sum(AZAFATA)/nullif(s.NUM_DAYS,0),0) PERC_AZAFATA,  
+  1.*isnull( sum(TOTEM)/nullif(s.NUM_DAYS,0),0) PERC_TOTEM,  
+  1.*isnull( sum(TOTEM_ESP)/nullif(s.NUM_DAYS,0),0) PERC_TOTEM_ESP,  
+  1.*isnull( sum(SVM)/nullif(s.NUM_DAYS,0),0) PERC_SVM,  
+  1.*isnull( sum(TFT)/nullif(s.NUM_DAYS,0),0) PERC_TFT,  
+  1.*isnull( sum(CUE)/nullif(s.NUM_DAYS,0),0) PERC_CUE,  
+  1.*isnull(visit/nullif(s.NUM_DAYS,0),0) PERC_visit
 into [STAGING_2].[dbo].XXX_Sell_y_Activities_10d 
 from Sell_Periods_10d_rich_dates_VISITS s 
 left join invest_column i
