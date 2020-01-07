@@ -254,7 +254,7 @@ group by
 
 
 select 
-  s.R,
+  s.R -1 R,
 	s.tercio,
 	s.NUM_SELLING_DAYS,
 	s.NUM_DAYS,
@@ -325,7 +325,20 @@ select
   sum( isnull(SVM,0))            SVM,
   sum( isnull(TFT,0))            TFT,
   sum( isnull(CUE,0))            CUE,
-  visit      
+  visit,
+  isnull( sum(MECHERO)/nullif(p.NUM_DAYS,0),0) PERC_MECHERO,  
+  isnull( sum(CLIPPER)/nullif(p.NUM_DAYS,0),0) PERC_CLIPPER,  
+  isnull( sum(ABP)/nullif(p.NUM_DAYS,0),0) PERC_ABP,  
+  isnull( sum(DISPENSADOR)/nullif(p.NUM_DAYS,0),0) PERC_DISPENSADOR,  
+  isnull( sum(VISIBILIDAD)/nullif(p.NUM_DAYS,0),0) PERC_VISIBILIDAD,  
+  isnull( sum(VISIBILIDAD_ESP,0))VISIBILIDAD_ESP,
+  isnull( sum(AZAFATA)/nullif(p.NUM_DAYS,0),0) PERC_AZAFATA,  
+  isnull( sum(TOTEM)/nullif(p.NUM_DAYS,0),0) PERC_TOTEM,  
+  isnull( sum(TOTEM_ESP)/nullif(p.NUM_DAYS,0),0) PERC_TOTEM_ESP,  
+  isnull( sum(SVM)/nullif(p.NUM_DAYS,0),0) PERC_SVM,  
+  isnull( sum(TFT)/nullif(p.NUM_DAYS,0),0) PERC_TFT,  
+  isnull( sum(CUE)/nullif(p.NUM_DAYS,0),0) PERC_CUE,  
+  isnull(visit/nullif(p.NUM_DAYS,0),0) PERC_visit
 into [STAGING_2].[dbo].XXX_Sell_y_Activities_10d 
 from Sell_Periods_10d_rich_dates_VISITS s 
 left join invest_column i

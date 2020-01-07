@@ -1,7 +1,7 @@
-/*################### 60 min #################################################*/
+/*################### 20 min #################################################*/
   
 
-/*#########################################################################*/
+/*####################### 5 min ################################################*/
 IF OBJECT_ID('[STAGING_2].[dbo].XXX_Sell_IN_Periods', 'U') IS NOT NULL
  DROP TABLE [STAGING_2].[dbo].XXX_Sell_IN_Periods;
 
@@ -140,11 +140,11 @@ select	--SI.r -1 R,
 		SI.Midcategory,
 		SI.SI_ITG_WSE,
 		SI.SI_MRKT_WSE,		
-		SI.SI_ITG_WSE /		SI.SI_MRKT_WSE SOM_P,
+		--SI.SI_ITG_WSE /		SI.SI_MRKT_WSE SOM_P,
 		sum(SELLING_DAY) days_btw_order,
-		ceiling(SI.SI_ITG_WSE/sum(SELLING_DAY)) DAILY_SI_ITG_WSE,
-		ceiling(SI.SI_MRKT_WSE/sum(SELLING_DAY)) DAILY_SI_MRKT_WSE		,
-		ceiling(SI.SI_ITG_WSE/sum(SELLING_DAY)) / ceiling(SI.SI_MRKT_WSE/sum(SELLING_DAY)) SOM
+		ceiling(isnull(SI.SI_ITG_WSE/nullif(sum(SELLING_DAY),0),0)) DAILY_SI_ITG_WSE,
+		ceiling(isnull(SI.SI_MRKT_WSE/nullif(sum(SELLING_DAY),0),0)) DAILY_SI_MRKT_WSE
+		--ceiling(SI.SI_ITG_WSE/sum(SELLING_DAY)) / ceiling(SI.SI_MRKT_WSE/sum(SELLING_DAY)) SOM
 from [STAGING_2].[dbo].XXX_Sell_IN_Periods SI
 join ite.T_DAY d on d.CAL_DATE between SI.CAL_DATE and	SI.CAL_DATE_end
 
