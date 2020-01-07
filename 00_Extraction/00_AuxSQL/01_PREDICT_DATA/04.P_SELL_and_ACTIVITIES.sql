@@ -223,9 +223,7 @@ select
 	p.BRANDFAMILY_ID,
 	p.Midcategory,
 	p.SI_ITG_WSE,
-	p.SI_MRKT_WSE,
-	p.SO_ITG_WSE,
-	p.SO_MRKT_WSE
+	p.SI_MRKT_WSE
 from [STAGING_2].[dbo].XXX_Sell_Periods_10d p
 left join [STAGING_2].[dbo].XXX_ITG_Sell_IN s
 		on s.cal_date between p.CAL_DATE and p.CAL_DATE_end
@@ -244,9 +242,7 @@ group by
 	p.BRANDFAMILY_ID,
 	p.Midcategory,
 	p.SI_ITG_WSE,
-	p.SI_MRKT_WSE,
-	p.SO_ITG_WSE,
-	p.SO_MRKT_WSE
+	p.SI_MRKT_WSE
 )
 
 , Sell_Periods_10d_rich_dates_VISITS as (
@@ -267,10 +263,7 @@ select
   s.Midcategory,
   isnull(s.SI_ITG_WSE,0) SI_ITG_WSE,
   isnull(s.SI_MRKT_WSE,0) SI_MRKT_WSE,
-  isnull(s.SO_ITG_WSE,0) SO_ITG_WSE,
-  isnull(s.SO_MRKT_WSE,0) SO_MRKT_WSE,
   isnull(isnull(s.SI_ITG_WSE,0) / nullif(s.SI_MRKT_WSE,0),0) QUOTA_SELLIN,
-  isnull(isnull(s.SO_ITG_WSE,0) / nullif(s.SO_MRKT_WSE,0),0) QUOTA_SELLOUT,
   sum( isnull(visit,0))          visit      
 from Sell_Periods_10d_rich_dates s 	
 left join visits v  
@@ -290,9 +283,7 @@ group by
   s.BRANDFAMILY_ID,
   s.Midcategory,
   s.SI_ITG_WSE,
-  s.SI_MRKT_WSE,
-  s.SO_ITG_WSE,
-  s.SO_MRKT_WSE
+  s.SI_MRKT_WSE
 )
 
 select 
@@ -309,10 +300,7 @@ select
   s.Midcategory,
   isnull(s.SI_ITG_WSE,0) SI_ITG_WSE,
   isnull(s.SI_MRKT_WSE,0) SI_MRKT_WSE,
-  isnull(s.SO_ITG_WSE,0) SO_ITG_WSE,
-  isnull(s.SO_MRKT_WSE,0) SO_MRKT_WSE,
   isnull(QUOTA_SELLIN,0) QUOTA_SELLIN,
-  isnull(QUOTA_SELLOUT,0)QUOTA_SELLOUT,
   sum( isnull(MECHERO,0))        MECHERO,
   sum( isnull(CLIPPER,0))        CLIPPER,
   sum( isnull(ABP,0))            ABP,
@@ -360,8 +348,5 @@ group by
   s.Midcategory,
   s.SI_ITG_WSE,
   s.SI_MRKT_WSE,
-  s.SO_ITG_WSE,
-  s.SO_MRKT_WSE,
   s.QUOTA_SELLIN,
-  s.QUOTA_SELLOUT,
   visit

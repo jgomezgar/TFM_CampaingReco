@@ -5,7 +5,7 @@
    [STAGING_2].[dbo].XXX_P_ITG_Sell_IN_Periods -->Sell In de estancos SIN Sell Out, arreglados los negativos, y agrupados por sacas.
 */
 
-)
+
 
 /*#########################################################################*/
 IF OBJECT_ID('[STAGING_2].[dbo].XXX_P_ITG_Sell_IN', 'U') IS NOT NULL
@@ -23,7 +23,7 @@ from	ITE.FACT_SMLD_Smoke_ITG	a11
 	  on 	(a11.[SALESDATE] = a12.[CAL_DAY])
 	join	ITE.T_BRANDPACKS	a15
 	  on 	(a11.[BRANDPACK_ID] = a15.[BRANDPACK_ID] )
-where	a12.CAL_MONTH >=  '201500' /*and
+where	a12.CAL_MONTH >=  '201412' /*and
  not exists (select 1 from   ITE.V_Lu_Muestra_SO_1Canal_15M SO 
 				   where  SO.[Muestra_so_ok]=1 and 
 				   a11.CUSTOMER_ID 	= SO.CUSTOMER_ID )*/
@@ -52,7 +52,7 @@ from	ITE.FACT_SMLD_Smoke_ITG	a11
 	join	ITE.T_BRANDPACKS	a15
 	  on 	(a11.[BRANDPACK_ID] = a15.[BRANDPACK_ID] )
 
-where	a12.CAL_MONTH >=  '201500' /*  and
+where	a12.CAL_MONTH >=  '201412' /*  and
  not exists (select 1 from   ITE.V_Lu_Muestra_SO_1Canal_15M SO 
 				   where  SO.[Muestra_so_ok]=1 and 
 				   a11.CUSTOMER_ID 	= SO.CUSTOMER_ID ) */
@@ -103,7 +103,7 @@ with ITG_Sell_IN_std as (
 				convert(date, convert(varchar(8),SalesDate),112) SacaDate,
 				r = row_number() over (partition by [CUSTOMER_ID] order by SalesDate desc)
 	from [ITE_PRD].[ITE].[FactLess_CALENDARIO_SACA]
-	where isnull(SalesDate,0)<>0 and SalesDate between 20171000 and convert(int, convert(varchar(8),GETDATE()-1,112))
+	where isnull(SalesDate,0)<>0 and SalesDate > 20141220 --and convert(int, convert(varchar(8),GETDATE()-1,112))
 	)
  
 ,sacas_Period as (
@@ -167,14 +167,11 @@ group by
 )
 
 ,ITG_Sell_IN_top as (
-	select * 
-	from (
+
 		select *, r = row_number() over (partition by [CUSTOMER_ID], [BRANDFAMILY_ID] order by CAL_DATE desc), 
 		COUNT( CAL_DATE) over (partition by [CUSTOMER_ID], [BRANDFAMILY_ID]) num
 		from ITG_Sell_IN_sacas
-		) a 
-	where -- r <= 10 and 
-		   num >=6
+
 	)
 
 
