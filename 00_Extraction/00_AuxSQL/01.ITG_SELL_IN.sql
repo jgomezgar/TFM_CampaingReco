@@ -215,7 +215,7 @@ group by
 Agrupamos todas las ventas sueltas en la saca correspondiente anterior
 */
 select  t.r R,
-	t.CAL_DATE,p.CAL_DATE CAL_DATE_end,
+	t.CAL_DATE,dateadd(dd,-1,p.CAL_DATE) CAL_DATE_end,
 	t.[CUSTOMER_ID],
 	t.[BRANDFAMILY_ID],
 	t.Midcategory,
