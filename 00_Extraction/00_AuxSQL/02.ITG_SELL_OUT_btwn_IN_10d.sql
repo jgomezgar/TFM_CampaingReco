@@ -190,7 +190,7 @@ group by
 )
 
 
-
+, Sell_Periods_10d_ITG_SO as (
 select	SI.r -1 R,
 		SI.tercio,
 		SI.NUM_SELLING_DAYS,
@@ -202,18 +202,68 @@ select	SI.r -1 R,
 		SI.BRANDFAMILY_ID,
 		SI.Midcategory,
 		SI.SI_ITG_WSE,
-		ceiling(SUM(SI_MRKT_WSE)) SI_MRKT_WSE,
-   	    ceiling(SUM(case when SI.BRANDFAMILY_ID =	SO.BRANDFAMILY_ID  then SO.SO_WSE end)) SO_ITG_WSE,
-  	    ceiling(SUM( SO.SO_WSE)) SO_MRKT_WSE
+		SI_MRKT_WSE,
+  	ceiling(SUM( SO.SO_WSE)) SO_ITG_WSE
 
-Into [STAGING_2].[dbo].XXX_Sell_Periods_10d
 from Sell_IN_Periods_10d SI
 left join [STAGING_2].[dbo].XXX_ITG_Sell_OUT SO 
 	   on SI.CUSTOMER_ID 	= SO.CUSTOMER_ID and
-		  SI.Midcategory =	SO.[SUBCATEGORY] and
-		  SO_DATE between SI.CAL_DATE and SI.CAL_DATE_end  
-
+		  SI.BRANDFAMILY_ID =	SO.[BRANDFAMILY_ID] and
+		  SO_DATE between SI.CAL_DATE and SI.CAL_DATE_end
 where  SI.CAL_DATE between SO_Start and SO_End
+GROUP by 
+		SI.r,
+		SI.tercio,
+		SI.NUM_SELLING_DAYS,
+		SI.NUM_DAYS,
+		SI.days_btw_order,
+		SI.CAL_DATE,
+		SI.CAL_DATE_end,
+		SI.CUSTOMER_ID,
+		SI.BRANDFAMILY_ID,
+		SI.Midcategory,
+		SI.SI_ITG_WSE,
+		SI.SI_MRKT_WSE
+
+)
+		
+, MRKT_SO as (
+	select	
+		a15.[CAL_DATE]  ,
+		a11.[CUSTOMER_ID]  ,
+		a11.[SUBCATEGORY]  Midcategory,
+		sum(a11.[WSE_MRKT])  [WSE_MRKT]
+	from	ITE.V_Fact_SMLD_WSE_SO_MRKT	a11
+		join	ITE.T_DAY	a15
+		  on 	(a11.[DIA] = a15.[DIA])
+	where	a15.CAL_MONTH >=  '201710'
+	  and a11.[SUBCATEGORY] in (N'BLOND', N'RYO')
+	group by	a15.[CAL_DATE],
+		a11.[CUSTOMER_ID],
+		a11.[SUBCATEGORY]
+)
+		
+select	SI.R,
+		SI.tercio,
+		SI.NUM_SELLING_DAYS,
+		SI.NUM_DAYS,
+		SI.days_btw_order,
+		SI.CAL_DATE,
+		SI.CAL_DATE_end,
+		SI.CUSTOMER_ID,
+		SI.BRANDFAMILY_ID,
+		SI.Midcategory,
+		SI.SI_ITG_WSE,
+		SI.SI_MRKT_WSE,
+  		SI.SO_ITG_WSE,
+  		ceiling(SUM( SO.[WSE_MRKT])) SO_MRKT_WSE
+
+Into [STAGING_2].[dbo].XXX_Sell_Periods_10d
+from Sell_Periods_10d_ITG_SO SI
+left join MRKT_SO SO 
+	   on SI.CUSTOMER_ID 	= SO.CUSTOMER_ID and
+		  SI.Midcategory =	SO.Midcategory and
+		  SO.[CAL_DATE] between SI.CAL_DATE and SI.CAL_DATE_end
 
 GROUP by 
 		SI.r,
@@ -226,7 +276,9 @@ GROUP by
 		SI.CUSTOMER_ID,
 		SI.BRANDFAMILY_ID,
 		SI.Midcategory,
-		SI.SI_ITG_WSE
+		SI.SI_ITG_WSE,
+		SI.SI_MRKT_WSE,
+		SI.SO_ITG_WSE
 order by SI.CUSTOMER_ID,
 		SI.BRANDFAMILY_ID,
 		SI.CAL_DATE 
