@@ -139,8 +139,6 @@ join [STAGING_2].[dbo].XXX_P_Sell_y_Activities_10d C2
 
 Select 
 		C0.CUSTOMER_ID,
-		C0.OK_13M,
-		C0.OK_15M,
 		C0.BRANDFAMILY_ID,
 		BF.NAME [BRANDFAMILY],
 		C0.Midcategory,
