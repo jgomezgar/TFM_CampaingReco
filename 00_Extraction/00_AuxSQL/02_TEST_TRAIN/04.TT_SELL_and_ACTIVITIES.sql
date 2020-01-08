@@ -337,8 +337,8 @@ select
   isnull( sum(1.*TOTEM_ESP)/nullif(s.NUM_DAYS,0),0) PERC_TOTEM_ESP,  
   isnull( sum(1.*SVM)/nullif(s.NUM_DAYS,0),0) PERC_SVM,  
   isnull( sum(1.*TFT)/nullif(s.NUM_DAYS,0),0) PERC_TFT,  
-  isnull( sum(1.*CUE)/nullif(s.NUM_DAYS,0),0) PERC_CUE,  
-  isnull(visit/nullif(s.NUM_DAYS,0),0) PERC_visit
+  isnull(1.* sum(1.*CUE)/nullif(s.NUM_DAYS,0),0) PERC_CUE,  
+  isnull(1.*visit/nullif(s.NUM_DAYS,0),0) PERC_visit
 into [STAGING_2].[dbo].XXX_Sell_y_Activities_10d 
 from Sell_Periods_10d_rich_dates_VISITS s 
 left join invest_column i
