@@ -87,6 +87,6 @@ FROM Sell_IN_SoM_MovAvg MA join Sell_IN_SoM_MovAvgXY XY
 on  MA.CUSTOMER_ID = XY.CUSTOMER_ID and 
 	MA.BrandFamily_ID = XY.BrandFamily_ID
 	
-where YEAR(t.CAL_DATE) > 2016
+where YEAR(CAL_DATE) > 2016
 	
 
