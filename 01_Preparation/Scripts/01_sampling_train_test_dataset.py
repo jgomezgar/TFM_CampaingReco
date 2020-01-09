@@ -24,18 +24,21 @@ customers = customers[index]
 quality = True
 
 if quality:
-    #customers_ok = X['CUSTOMER_ID'][X['OK_15M'] == 1].drop_duplicates()
-    customers_ok = pd.read_csv(INPUT_QUALITY, sep='|')['CUSTOMER_ID']
-    train = customers_ok[:np.int(len(customers_ok)*0.4)].to_numpy()
-    test = np.concatenate([customers_ok[np.int(len(customers_ok)*0.4):], X['CUSTOMER_ID'][X['OK_15M'] == 0].drop_duplicates()])
+    ratio=0.4
+    customers_ok = pd.read_csv(INPUT_QUALITY, sep='|')['CUSTOMER_ID'].drop_duplicates()[:-1]
+    train = customers_ok[:np.int(len(customers_ok)*ratio)].to_numpy()
+    test = np.concatenate([customers_ok[np.int(len(customers_ok)*ratio):], X['CUSTOMER_ID'][X['OK_15M'] == 0].drop_duplicates()])
 
 else:
-    ratio = 0.3
+    ratio = 0.4
     train = customers[:int(np.round(len(customers)*ratio))]
     test = customers[int(np.round(len(customers)*ratio)):]
 
 index_train = X['CUSTOMER_ID'].isin(train)
 index_test = X['CUSTOMER_ID'].isin(test)
+
+print(index_train.sum())
+print(index_test.sum())
 
 X_train = X[index_train]
 X_test = X[index_test]

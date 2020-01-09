@@ -68,7 +68,7 @@ customers = np.array(X['CUSTOMER_ID'].drop_duplicates())
 
 index = np.random.permutation(len(customers))
 
-ratio = 0.5
+ratio = 0.75
 train = customers[:int(np.round(len(customers)*ratio))]
 val = customers[int(np.round(len(customers)*ratio)):]
 
@@ -139,9 +139,9 @@ joblib.dump(model, 'model.pkl')
 
 # val samples distribution
 plt.hist(res_val['real'], range=[0,30], label='real', bins=20)
-plt.legend(loc = 'best')
+plt.legend(loc = 'real')
 plt.hist(res_val['pred'], range=[0,30], label='pred', bins=20)
-plt.legend(loc = 'best')
+plt.legend(loc = 'pred')
 
 # Plot the highest percentage error 
 plt.hist(res_val.sort_values(by='percentage_error', ascending=False)['real'].iloc[:100])
@@ -151,9 +151,9 @@ plt.hist(res_val.sort_values(by='absolute_error', ascending=False)['real'].iloc[
 # Plot results
 res_sorted = res_val.sort_values(by='absolute_error', ascending=False).iloc[:100]
 plt.plot(np.arange(len(res_sorted)), res_sorted['real'], label='real')
-plt.legend(loc = 'best')
+plt.legend(loc = 'real')
 plt.plot(np.arange(len(res_sorted)), res_sorted['pred'], label='pred')
-plt.legend(loc = 'best')
+plt.legend(loc = 'pred')
 
 t2 = time.time()
 
