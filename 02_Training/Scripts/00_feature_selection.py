@@ -2,10 +2,12 @@
 # Import the libraries
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.feature_selection import RFE, RFECV
 import lightgbm as ltb
 import seaborn as sns
 from sklearn.preprocessing import StandardScaler
-#import dask.dataframe as dd
+import dask.dataframe as dd
 import time 
 
 t1 = time.time()
@@ -23,7 +25,7 @@ for field in data.columns.values:
     if 'fecha' in element or 'date' in element:
         date_cols.append(field)
 
-selected = True
+selected = False
 
 if not selected:
 
@@ -35,7 +37,7 @@ if not selected:
         or 'fecha' in element or 'date' in element:
             cols.append(field)
             
-    to_delete = cols+['Midcategory', 'R_0', 'R_1', 'R_2', 'R_3', 'R_4', 'R_5']
+    to_delete = cols+['BRANDFAMILY', 'Label_desc', 'Midcategory', 'R_0', 'R_1', 'R_2', 'R_3', 'R_4', 'R_5']
     
     X = data.drop(to_delete, axis=1)
     
@@ -44,13 +46,13 @@ if not selected:
     # GENERATE DUMMY TABLE FOR BRAND_FAMILY AND LABEL
     
     """
-    X = X.drop(['BRANDFAMILY_ID', 'label', 'customer_id', 'CUSTOMER_ID', 'QUOTA_SELLOUT_5', 'OK_13M', 'OK_15M'], axis=1)
+    X = X.drop(['BRANDFAMILY_ID', 'Label', 'CUSTOMER_ID', 'QUOTA_SELLOUT_5', 'OK_13M', 'OK_15M'], axis=1)
     y = data['QUOTA_SELLOUT_5']
     
     # Remove features more correlated between them
     correlations = X.corr()
     
- #   sns.heatmap(correlations)
+    sns.heatmap(correlations)
     
     threshold = 0.95
     ignored_fields = []

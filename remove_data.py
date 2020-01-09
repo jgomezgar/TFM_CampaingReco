@@ -2,7 +2,7 @@
 """
 Created on Mon Nov 25 19:48:31 2019
 
-@author: Jose Luis Gomez
+@author: ESMICILO
 """
 
 import os
@@ -17,7 +17,14 @@ module = -1
 
 if module == 0 or module == -1:
     if init.lower() in ['s', 'y', 'si', 'yes']: 
-        os.remove('00_Extraction/Data/Sales_and_Invest.csv')
+        if os.path.isfile('00_Extraction/Data/sellout_data.csv'):
+            os.remove('00_Extraction/Data/sellout_data.csv')
+            
+        if os.path.isfile('00_Extraction/Data/no_sellout_data.csv'):
+            os.remove('00_Extraction/Data/no_sellout_data.csv')
+            
+        if os.path.isfile('00_Extraction/Data/customers_ok15.csv'):
+            os.remove('00_Extraction/Data/customers_ok15.csv')
 
 if module == 1 or module == -1:
     if os.path.isfile('01_Preparation/Data/merged_sources.h5'):
@@ -38,6 +45,7 @@ if module == 1 or module == -1:
 if module == 2 or module == -1:
     if os.path.isfile('02_Training/Data/selected_features_train.h5'):
         os.remove('02_Training/Data/selected_features_train.h5')
+        
     if os.path.isfile('02_Training/Data/prepared_train.h5'):
         os.remove('02_Training/Data/prepared_train.h5')
 

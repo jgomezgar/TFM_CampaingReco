@@ -2,35 +2,41 @@
 """
 Created on Mon Nov 25 18:18:09 2019
 
-@author: Jose Luis Gomez
+@author: ESMICILO
 """
 
 import os
 import sys
 
-init = str(sys.argv[1])
-state = int(sys.argv[2])
-ignore_eval = str(sys.argv[3])
+init = 'n'
+state = 3
+ignore_eval = 'S'
 
-#init = 'n'
-#state = 2
-#ignore_eval = 'N'
+#init = str(sys.argv[1])
+#state = int(sys.argv[2])
+#ignore_eval = str(sys.argv[3])
+
 
 if init.lower() in ['s', 'y', 'si', 'yes']: 
     os.chdir("00_Extraction/Scripts/")
     
-    print('Beginning extracting SQL data...')
-    os.system('python 00_extraction.py')
-    print('SQL data extracted!\n')
+    print('Beginning extracting sellout data...')
+    os.system('python 00_extraction_sellout.py')
+    print('Sellout data extracted!\n')
+    
+    print('Beginning extracting no sellout data...')
+    os.system('python 01_extraction_no_sellout.py')
+    print('No sellout data extracted!\n')
+    
+    print('Beginning extracting quality sellout customers...')
+    os.system('python 02_extraction_sellout_ok15.py')
+    print('Quality sellout customers extracted!\n')
 
 if state >= 1:
     if init.lower() in ['s', 'y', 'si', 'yes']:
         os.chdir("../../01_Preparation/Scripts/")
     else:
         os.chdir("01_Preparation/Scripts/")
-    print('Beginning merging sources...')
-    os.system('python 00_merge_sources.py')
-    print('Data merged!\n')
     
     print('Beginning sampling train and test data...')
     os.system('python 01_sampling_train_test_dataset.py')
@@ -46,6 +52,7 @@ if state >= 1:
     
 if state >= 2:
     os.chdir("../../02_Training/Scripts/")
+    
     print('Beginning selecting best features...')
     os.system('python 00_feature_selection.py')
     print('Best features selected for train data!\n')
@@ -56,6 +63,7 @@ if state >= 2:
     
 if state >= 3 and ignore_eval.lower() != 's':
     os.chdir("../../03_Evaluation/Scripts/")
+    
     print('Beginning preparing, cleaning and adding new features to test data...')
     os.system('python 00_prepare_data_test.py')
     print('Test data prepared for testing model!\n')
@@ -66,6 +74,7 @@ if state >= 3 and ignore_eval.lower() != 's':
 
 if state >= 4:
     os.chdir("../../04_Prediction/Scripts/")
+    
     print('Beginning preparing, cleaning and adding new features to no sellout data...')
     os.system('python 00_prepare_no_sellout_data.py')
     print('No sellout data prepared!\n')

@@ -62,21 +62,26 @@ X = X[X['QUOTA_SELLOUT_5'] >= 0]
 
 #############################################################################################################
 
-X['sellin_itg_mean'] = X[['SI_ITG_WSE_4','SI_ITG_WSE_3','SI_ITG_WSE_2','SI_ITG_WSE_1', 'SI_ITG_WSE_0']].mean(axis=1)
-X['sellin_itg_var'] = X[['SI_ITG_WSE_4','SI_ITG_WSE_3','SI_ITG_WSE_2','SI_ITG_WSE_1', 'SI_ITG_WSE_0']].var(axis=1)
-X['sellin_itg_std']  = X[['SI_ITG_WSE_4','SI_ITG_WSE_3','SI_ITG_WSE_2','SI_ITG_WSE_1', 'SI_ITG_WSE_0']].std(axis=1)
-X['sellin_itg_sum'] = X[['SI_ITG_WSE_4','SI_ITG_WSE_3','SI_ITG_WSE_2','SI_ITG_WSE_1', 'SI_ITG_WSE_0']].sum(axis=1)
+si_itg_wse = ['SI_ITG_WSE_5', 'SI_ITG_WSE_4','SI_ITG_WSE_3','SI_ITG_WSE_2','SI_ITG_WSE_1', 'SI_ITG_WSE_0']
 
-X['sellin_mrkt_mean'] = X[['SI_MRKT_WSE_4','SI_MRKT_WSE_3','SI_MRKT_WSE_2','SI_MRKT_WSE_1','SI_MRKT_WSE_0']].mean(axis=1)
-X['sellin_mrkt_var'] = X[['SI_MRKT_WSE_4','SI_MRKT_WSE_3','SI_MRKT_WSE_2','SI_MRKT_WSE_1','SI_MRKT_WSE_0']].var(axis=1)
-X['sellin_mrkt_std'] = X[['SI_MRKT_WSE_4','SI_MRKT_WSE_3','SI_MRKT_WSE_2','SI_MRKT_WSE_1','SI_MRKT_WSE_0']].std(axis=1)
-X['sellin_mrkt_sum'] = X[['SI_MRKT_WSE_4','SI_MRKT_WSE_3','SI_MRKT_WSE_2','SI_MRKT_WSE_1','SI_MRKT_WSE_0']].sum(axis=1)
+X['sellin_itg_mean'] = X[si_itg_wse].mean(axis=1)
+X['sellin_itg_var'] = X[si_itg_wse].var(axis=1)
+X['sellin_itg_std']  = X[si_itg_wse].std(axis=1)
+X['sellin_itg_sum'] = X[si_itg_wse].sum(axis=1)
 
-X['qouta_sellin_mean'] = X[['QUOTA_SELLIN_4','QUOTA_SELLIN_3','QUOTA_SELLIN_2','QUOTA_SELLIN_1','QUOTA_SELLIN_0']].mean(axis=1)
-X['qouta_sellin_var'] = X[['QUOTA_SELLIN_4','QUOTA_SELLIN_3','QUOTA_SELLIN_2','QUOTA_SELLIN_1','QUOTA_SELLIN_0']].var(axis=1)
-X['qouta_sellin_std'] = X[['QUOTA_SELLIN_4','QUOTA_SELLIN_3','QUOTA_SELLIN_2','QUOTA_SELLIN_1','QUOTA_SELLIN_0']].std(axis=1)
-X['qouta_sellin_sum'] = X[['QUOTA_SELLIN_4','QUOTA_SELLIN_3','QUOTA_SELLIN_2','QUOTA_SELLIN_1','QUOTA_SELLIN_0']].sum(axis=1)
+si_mkrt_wse = ['SI_MRKT_WSE_5', 'SI_MRKT_WSE_4','SI_MRKT_WSE_3','SI_MRKT_WSE_2','SI_MRKT_WSE_1','SI_MRKT_WSE_0']
 
+X['sellin_mrkt_mean'] = X[si_mkrt_wse].mean(axis=1)
+X['sellin_mrkt_var'] = X[si_mkrt_wse].var(axis=1)
+X['sellin_mrkt_std'] = X[si_mkrt_wse].std(axis=1)
+X['sellin_mrkt_sum'] = X[si_mkrt_wse].sum(axis=1)
+
+quota_sellin = ['QUOTA_SELLIN_5', 'QUOTA_SELLIN_4','QUOTA_SELLIN_3','QUOTA_SELLIN_2','QUOTA_SELLIN_1','QUOTA_SELLIN_0']
+
+X['qouta_sellin_mean'] = X[quota_sellin].mean(axis=1)
+X['qouta_sellin_var'] = X[quota_sellin].var(axis=1)
+X['qouta_sellin_std'] = X[quota_sellin].std(axis=1)
+X['qouta_sellin_sum'] = X[quota_sellin].sum(axis=1)
 
 #############################################################################################################
 
@@ -85,6 +90,7 @@ X['qouta_sellin_sum'] = X[['QUOTA_SELLIN_4','QUOTA_SELLIN_3','QUOTA_SELLIN_2','Q
 #############################################################################################################
 
 inv = ['MECHERO', 'CLIPPER', 'ABP', 'DISPENSADOR', 'VISIBILIDAD', 'VISIBILIDAD_ESP', 'AZAFATA', 'TOTEM', 'TOTEM_ESP', 'SVM', 'TFT', 'CUE', 'VISIT']
+inv += ['PERC_MECHERO', 'PERC_CLIPPER', 'PERC_ABP', 'PERC_DISPENSADOR', 'PERC_VISIBILIDAD', 'PERC_VISIBILIDAD_ESP', 'PERC_AZAFATA', 'PERC_TOTEM', 'PERC_TOTEM_ESP', 'PERC_SVM', 'PERC_TFT', 'PERC_CUE', 'PERC_visit']
 for i in inv:
     X[i+'_mean'] = X[[i+'_4',i+'_3',i+'_2',i+'_1', i+'_0']].mean(axis=1)
     X[i+'_var'] = X[[i+'_4',i+'_3',i+'_2',i+'_1', i+'_0']].var(axis=1)
@@ -104,30 +110,7 @@ X['SEASON_SPRING'] = X['SEASON'].apply(lambda x: 1 if x == 1 else 0)
 X['SEASON_SUMMER'] = X['SEASON'].apply(lambda x: 1 if x == 2 else 0)
 X['SEASON_AUTUMN'] = X['SEASON'].apply(lambda x: 1 if x == 3 else 0)
 
-"""
 
-#############################################################################################################
-
-# SELLOUT Derived Features
-
-#############################################################################################################
-
-X['sellout_itg_mean'] = X[['SO_ITG_WSE_4','SO_ITG_WSE_3','SO_ITG_WSE_2','SO_ITG_WSE_1', 'SO_ITG_WSE_0']].mean(axis=1)
-X['sellout_itg_var'] = X[['SO_ITG_WSE_4','SO_ITG_WSE_3','SO_ITG_WSE_2','SO_ITG_WSE_1', 'SO_ITG_WSE_0']].var(axis=1)
-X['sellout_itg_std'] = X[['SO_ITG_WSE_4','SO_ITG_WSE_3','SO_ITG_WSE_2','SO_ITG_WSE_1', 'SO_ITG_WSE_0']].std(axis=1)
-X['sellout_itg_sum']  = X[['SO_ITG_WSE_4','SO_ITG_WSE_3','SO_ITG_WSE_2','SO_ITG_WSE_1', 'SO_ITG_WSE_0']].sum(axis=1)
-
-X['sellout_mrkt_mean'] = X[['SO_MRKT_WSE_4','SO_MRKT_WSE_3','SO_MRKT_WSE_2','SO_MRKT_WSE_1', 'SO_MRKT_WSE_0']].mean(axis=1)
-X['sellout_mrkt_var'] = X[['SO_MRKT_WSE_4','SO_MRKT_WSE_3','SO_MRKT_WSE_2','SO_MRKT_WSE_1', 'SO_MRKT_WSE_0']].var(axis=1)
-X['sellout_mrkt_std'] = X[['SO_MRKT_WSE_4','SO_MRKT_WSE_3','SO_MRKT_WSE_2','SO_MRKT_WSE_1', 'SO_MRKT_WSE_0']].std(axis=1)
-X['sellout_mrkt_sum'] = X[['SO_MRKT_WSE_4','SO_MRKT_WSE_3','SO_MRKT_WSE_2','SO_MRKT_WSE_1', 'SO_MRKT_WSE_0']].sum(axis=1)
-
-X['qouta_sellout_mean'] = X[['QUOTA_SELLOUT_4','QUOTA_SELLOUT_3','QUOTA_SELLOUT_2','QUOTA_SELLOUT_1','QUOTA_SELLOUT_0']].mean(axis=1)
-X['qouta_sellout_var'] = X[['QUOTA_SELLOUT_4','QUOTA_SELLOUT_3','QUOTA_SELLOUT_2','QUOTA_SELLOUT_1','QUOTA_SELLOUT_0']].var(axis=1)
-X['qouta_sellout_std'] = X[['QUOTA_SELLOUT_4','QUOTA_SELLOUT_3','QUOTA_SELLOUT_2','QUOTA_SELLOUT_1','QUOTA_SELLOUT_0']].std(axis=1)
-X['qouta_sellout_sum'] = X[['QUOTA_SELLOUT_4','QUOTA_SELLOUT_3','QUOTA_SELLOUT_2','QUOTA_SELLOUT_1','QUOTA_SELLOUT_0']].sum(axis=1)
-
-"""
 date_cols = ['CAL_DATE_0', 'CAL_DATE_end_0', 'CAL_DATE_1', 'CAL_DATE_end_1', 'CAL_DATE_2', 'CAL_DATE_end_2', 'CAL_DATE_3',
  'CAL_DATE_end_3', 'CAL_DATE_4', 'CAL_DATE_end_4', 'CAL_DATE_5', 'CAL_DATE_end_5']
 

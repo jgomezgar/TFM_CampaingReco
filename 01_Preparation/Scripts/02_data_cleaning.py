@@ -2,6 +2,7 @@
 # Import the libraries
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import time
 
 t1 = time.time()

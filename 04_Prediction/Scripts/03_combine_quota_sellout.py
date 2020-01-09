@@ -10,7 +10,7 @@ INPUT_DATA_ORIGINAL = '../../04_Prediction/Data/quota_sellout_data_original.h5'
 INPUT_DATA_PREDICTED = '../../04_Prediction/Data/qouta_sellout_data_predicted.h5'
 OUTPUT = '../Data/qouta_sellout_data_combined.h5'
 
-columns = ['CUSTOMER_ID', 'BRANDFAMILY_ID', 'label', 'QUOTA_SELLOUT_5',
+columns = ['CUSTOMER_ID', 'BRANDFAMILY_ID', 'Label', 'QUOTA_SELLOUT_5',
        'CAL_DATE_5', 'CAL_DATE_end_5', 'ABP_5', 'AZAFATA_5', 'CUE_5',
        'CLIPPER_5', 'DISPENSADOR_5', 'MECHERO_5', 'SVM_5', 'TFT_5', 'TOTEM_5',
        'VISIBILIDAD_5', 'VISIBILIDAD_ESP_5', 'VISIT_5']

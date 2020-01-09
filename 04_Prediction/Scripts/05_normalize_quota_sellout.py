@@ -92,4 +92,4 @@ t2 = time.time()
 
 print("Time:", str(t2-t1))
 
-#month_quota_all_total = pd.read_csv('../00_Analysis/02_data_unification/Data/month_quota_all_total.csv', sep='|', nrows=10000)
+#month_quota_all_total = pd.read_csv('C:/Users/esmicilo/Documents/Altadis-Data-Science/Sprint 4/00_Analysis/02_data_unification/Data/month_quota_all_total.csv', sep='|', nrows=10000)

@@ -77,8 +77,11 @@ OUTPUT = '../Data/quota_sellout_norm.h5'
 #data = pd.read_hdf(INPUT_QUOTA_SELLOUT, key='qouta_sellout_data_combined').sample(30000)
 data = pd.read_hdf(INPUT_QUOTA_SELLOUT, key='qouta_sellout_data_combined')
 
-data['CAL_DATE_5'] = pd.to_datetime(data['CAL_DATE_5'], format='%Y-%m-%d')
-data['CAL_DATE_end_5'] = pd.to_datetime(data['CAL_DATE_5'], format='%Y-%m-%d')
+data['CAL_DATE_5'] = pd.to_datetime(data['CAL_DATE_5'], format='%Y-%m-%d', errors='coerce')
+data['CAL_DATE_end_5'] = pd.to_datetime(data['CAL_DATE_5'], format='%Y-%m-%d', errors='coerce')
+
+data.dropna(inplace=True)
+
 data['actual_month_5'] = data['CAL_DATE_5'].map(lambda value: value.month)
 
 customers_brands = data[['CUSTOMER_ID', 'BRANDFAMILY_ID']]
@@ -92,7 +95,7 @@ loop_cols = fields.copy()
 
 loop_cols.remove('CUSTOMER_ID')
 loop_cols.remove('BRANDFAMILY_ID')
-loop_cols.remove('label')
+loop_cols.remove('Label')
 
 total_columns = []
 for i in range(0, 4):
@@ -106,8 +109,8 @@ def get_pivot_data(data, cb):
     b = cb[1]
 
     cust_brand = data[(data["CUSTOMER_ID"] == c) & (data["BRANDFAMILY_ID"] == b)].sort_values('CAL_DATE_5', ascending=False)
-    label = cust_brand['label'].iloc[0]
-    cust_brand.drop(['CUSTOMER_ID', 'BRANDFAMILY_ID', 'label'], axis=1, inplace=True)
+    label = cust_brand['Label'].iloc[0]
+    cust_brand.drop(['CUSTOMER_ID', 'BRANDFAMILY_ID', 'Label'], axis=1, inplace=True)
     
     pivot_data = []
     
@@ -130,7 +133,7 @@ def get_pivot_data(data, cb):
 
     pivot_data['CUSTOMER_ID'] = c
     pivot_data['BRANDFAMILY_ID'] = b
-    pivot_data['label'] = label
+    pivot_data['Label'] = label
     
     #pivot_data.to_csv('tmp_data/pivot_data_'+str(c)+b+'.csv', index=False, sep='|', mode='w')
     return pivot_data
@@ -168,8 +171,8 @@ for _, cb in tqdm(customers_brands.iterrows(), total=customers_brands.shape[0]):
     b = cb[1]
 
     cust_brand = data[(data["CUSTOMER_ID"] == c) & (data["BRANDFAMILY_ID"] == b)].sort_values('CAL_DATE_5', ascending=False)
-    label = cust_brand['label'].iloc[0]
-    cust_brand.drop(['CUSTOMER_ID', 'BRANDFAMILY_ID', 'label'], axis=1, inplace=True)
+    label = cust_brand['Label'].iloc[0]
+    cust_brand.drop(['CUSTOMER_ID', 'BRANDFAMILY_ID', 'Label'], axis=1, inplace=True)
     
     pivot_data = []
     
@@ -191,7 +194,7 @@ for _, cb in tqdm(customers_brands.iterrows(), total=customers_brands.shape[0]):
 
     pivot_data['CUSTOMER_ID'] = c
     pivot_data['BRANDFAMILY_ID'] = b
-    pivot_data['label'] = label
+    pivot_data['Label'] = label
     
     if len(all_data) == 0:
         all_data = pivot_data.copy()
@@ -213,11 +216,13 @@ all_data.rename(columns={'actual_month_0':'actual_month'}, inplace=True)
 for element in list(all_data.columns):
     if 'CAL_DATE' in element[:-2]:
         num = element[-2:]
-        print(element[:-2], num)
         all_data[element[:-2]+num] = pd.to_datetime(all_data[element[:-2]+num], format='%Y-%m-%d')
 
 columns = pd.Series(all_data.columns).sort_values()
-all_data[columns].to_hdf('../Data/quota_sellout_data_pivoted.h5', key='quota_sellout_data_pivoted', index=False, mode='w')
+
+all_data = all_data[columns].sort_values(by=['CUSTOMER_ID', 'BRANDFAMILY_ID', 'CAL_DATE_0'])
+
+all_data.to_hdf('../Data/quota_sellout_data_pivoted.h5', key='quota_sellout_data_pivoted', index=False, mode='w')
 
 t2 = time.time()
 
