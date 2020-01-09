@@ -2,7 +2,7 @@
 """
 Created on Mon Nov 25 18:18:09 2019
 
-@author: ESMICILO
+@author: Jose Luis Gomez
 """
 
 import os
