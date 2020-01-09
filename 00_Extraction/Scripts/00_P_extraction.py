@@ -8,7 +8,7 @@ import os
 from tqdm import tqdm 
 
 
-OUTPUT= '../Data/Sales_and_Invest.csv'
+OUTPUT= '../Data/P_Sales_and_Invest.csv'
 
 conn = pyodbc.connect('Driver={SQL Server};'
                        'Server=esmz08srdb009.imptobnet.com;'
@@ -17,7 +17,7 @@ conn = pyodbc.connect('Driver={SQL Server};'
  
 cursor = conn.cursor()
 
-query = open('../01_Sales_and_Invest_Pivot6Times_10d.sql', 'r') .read()
+query = open('../01_P_Sales_and_Invest_Pivot6Times_10d.sql', 'r') .read()
 
 sql = '\n' + query 
 
