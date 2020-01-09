@@ -8,8 +8,8 @@ import dask.dataframe as dd
 
 t1 = time.time()
 
-INPUT = '../../00_Extraction/Data/Sales_and_Invest.csv'
-INPUT_DATA = '../../00_Extraction/Data/sellout_data.csv'
+
+INPUT_DATA = '../../00_Extraction/Data/TT_Sales_and_Invest.csv'
 INPUT_QUALITY = '../../00_Extraction/Data/customers_ok15.csv' 
 OUTPUT_TRAIN = '../Data/sampled_train.h5'
 OUTPUT_TEST = '../Data/sampled_test.h5'
