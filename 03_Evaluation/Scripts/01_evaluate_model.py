@@ -87,7 +87,7 @@ res_test = eval_model(model, X_test, y_test, [5, 10, 15])
 
 # Test samples distribution
 plt.hist(res_test['real'], range=[0,30], label='real', bins=20)
-plt.legend(loc = 'real')
+plt.legend(loc = 'best')
 
 # Plot the highest percentage error 
 plt.hist(res_test.sort_values(by='percentage_error', ascending=False)['real'].iloc[:100])
@@ -97,9 +97,9 @@ plt.hist(res_test.sort_values(by='absolute_error', ascending=False)['real'].iloc
 # Plot results
 res_sorted = res_test.sort_values(by='absolute_error', ascending=False).iloc[:100]
 plt.plot(np.arange(len(res_sorted)), res_sorted['real'], label='real')
-plt.legend(loc = 'real')
+plt.legend(loc = 'best')
 plt.plot(np.arange(len(res_sorted)), res_sorted['pred'], label='pred')
-plt.legend(loc = 'pred')
+plt.legend(loc = 'best')
 
 data = pd.concat([X.reset_index(), res_test], axis=1)
 

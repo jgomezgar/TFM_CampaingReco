@@ -36,7 +36,7 @@ X_info = X.describe()
 
 # Test samples distribution
 plt.hist(X['real'], range=[X['real'].min(),X['real'].max()], label='real', bins=40)
-plt.legend(loc = 'real')
+plt.legend(loc = 'best')
 
 # Plot the highest percentage error 
 plt.hist(X.sort_values(by='percentage_error', ascending=False)['real'].iloc[:100])
@@ -46,9 +46,9 @@ plt.hist(X.sort_values(by='absolute_error', ascending=False)['real'].iloc[:100])
 # Plot results
 res_sorted = X.sort_values(by='absolute_error', ascending=False).iloc[:100]
 plt.plot(np.arange(len(res_sorted)), res_sorted['real'], label='real')
-plt.legend(loc = 'real')
+plt.legend(loc = 'best')
 plt.plot(np.arange(len(res_sorted)), res_sorted['pred'], label='pred')
-plt.legend(loc = 'pred')
+plt.legend(loc = 'best')
 
 t2 = time.time()
 

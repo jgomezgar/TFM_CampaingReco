@@ -25,11 +25,11 @@ ignore_eval = 'S'
 if init.lower() in ['s', 'y', 'si', 'yes']: 
     os.chdir("00_Extraction/Scripts/")
     
-    print('Beginning extracting sellout data...')
+    print('Beginning extracting sellout (Train & Test) data...')
     os.system('python 00_TT_extraction.py')
     print('Sellout data extracted!\n')
     
-    print('Beginning extracting no sellout data...')
+    print('Beginning extracting no sellout (Prediction) data...')
     os.system('python 00_P_extraction.py')
     print('No sellout data extracted!\n')
     
@@ -83,6 +83,11 @@ if state >= 3 and ignore_eval.lower() != 's':
     os.system('python 01_evaluate_model.py')
     print('Model evaluated!\n')
 
+#    print('Beginning of the analysis of results with test data...')
+#    os.system('python 02_Results_Analysis.py')
+#    print('Results Analysis!\n')
+    
+    
 # 04_Prediction
 if state >= 4:
     os.chdir("../../04_Prediction/Scripts/")
