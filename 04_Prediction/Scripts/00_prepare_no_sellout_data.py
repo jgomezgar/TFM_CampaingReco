@@ -32,7 +32,7 @@ def get_season(M) :
 pylab.rcParams["figure.figsize"] = (10, 5)
 """
 
-INPUT = '../../00_Extraction/Data/no_sellout_data.csv'
+INPUT = '../../00_Extraction/Data/P_Sales_and_Invest.csv'
 OUTPUT = '../Data/prepared_no_sellout_data.h5'
 
 # Read merged data for sampling
