@@ -17,6 +17,11 @@ ignore_eval = 'S'
 #ignore_eval = str(sys.argv[3])
 
 
+# 00_Extraction:
+
+## volcado desde BBDD a CSV el DataSet a analizar
+#### OMITIR init = 'n' En caso de no tener acceso a BBDD
+
 if init.lower() in ['s', 'y', 'si', 'yes']: 
     os.chdir("00_Extraction/Scripts/")
     
@@ -32,6 +37,8 @@ if init.lower() in ['s', 'y', 'si', 'yes']:
     os.system('python 02_extraction_sellout_ok15.py')
     print('Quality sellout customers extracted!\n')
 
+# 01_Preparation:
+## 
 if state >= 1:
     if init.lower() in ['s', 'y', 'si', 'yes']:
         os.chdir("../../01_Preparation/Scripts/")

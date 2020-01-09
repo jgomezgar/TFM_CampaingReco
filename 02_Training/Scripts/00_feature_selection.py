@@ -81,6 +81,24 @@ if not selected:
     np.array(columns)[features]
     
     """
+
+    ['NUM_SELLING_DAYS_0', 'NUM_DAYS_0', 'days_btw_order_0', 
+    'num_orders_0', 'QUOTA_SELLIN_0', 'NUM_SELLING_DAYS_1', 
+    'NUM_DAYS_1', 'days_btw_order_1', 'num_orders_1', 
+    'QUOTA_SELLIN_1', 'NUM_SELLING_DAYS_2', 'NUM_DAYS_2', 
+    'days_btw_order_2', 'num_orders_2', 'QUOTA_SELLIN_2', 
+    'NUM_SELLING_DAYS_3', 'NUM_DAYS_3', 'days_btw_order_3', 
+    'num_orders_3', 'QUOTA_SELLIN_3', 'NUM_SELLING_DAYS_4', 
+    'NUM_DAYS_4', 'days_btw_order_4', 'num_orders_4', 
+    'QUOTA_SELLIN_4', 'NUM_DAYS_5', 'days_btw_order_5', 
+    'num_orders_5', 'sellin_itg_var', 'sellin_itg_std', 
+    'sellin_mrkt_var', 'sellin_mrkt_std', 'qouta_sellin_var', 
+    'qouta_sellin_std', 'SVM_var', 'SVM_std', 'TFT_var', 'TFT_std', 
+    'VISIT_var', 'PERC_visit_var', 
+    'SEASON', 'SEASON_WINTER', 'SEASON_SPRING', 'SEASON_SUMMER', 'SEASON_AUTUMN']
+    
+    
+    Previous:
     ['SI_MRKT_WSE_0', 'MECHERO_0', 'ABP_0', 'DISPENSADOR_ESP_0',
        'VISIT_0', 'MECHERO_1', 'ABP_1', 'DISPENSADOR_ESP_1', 'VISIT_1',
        'CLIPPER_2', 'ABP_2', 'DISPENSADOR_ESP_2', 'CUE_2', 'VISIT_2',
@@ -96,6 +114,8 @@ if not selected:
        'AZAFATA_var', 'TOTEM_var', 'TOTEM_ESP_var', 'SVM_var', 'CUE_var',
        'VISIT_var', 'VISIT_std', 'SEASON', 'SEASON_SPRING',
        'SEASON_SUMMER']
+    
+    
     """
     
     best_features = list(np.array(columns)[features])
