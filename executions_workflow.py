@@ -56,7 +56,9 @@ if state >= 1:
     print('Beginning feature engineering...')
     os.system('python 03_feature_engineering.py')
     print('Added new train data features!\n')
-    
+
+# 02_Training    
+
 if state >= 2:
     os.chdir("../../02_Training/Scripts/")
     
@@ -67,6 +69,8 @@ if state >= 2:
     print('Beginning training model...')
     os.system('python 01_train_model.py')
     print('Model trained!\n')
+    
+# 03_Evaluation
     
 if state >= 3 and ignore_eval.lower() != 's':
     os.chdir("../../03_Evaluation/Scripts/")
@@ -79,6 +83,7 @@ if state >= 3 and ignore_eval.lower() != 's':
     os.system('python 01_evaluate_model.py')
     print('Model evaluated!\n')
 
+# 04_Prediction
 if state >= 4:
     os.chdir("../../04_Prediction/Scripts/")
     
