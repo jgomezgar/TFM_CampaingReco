@@ -21,11 +21,11 @@ if init.lower() in ['s', 'y', 'si', 'yes']:
     os.chdir("00_Extraction/Scripts/")
     
     print('Beginning extracting sellout data...')
-    os.system('python 00_extraction_sellout.py')
+    os.system('python 00_TT_extraction.py')
     print('Sellout data extracted!\n')
     
     print('Beginning extracting no sellout data...')
-    os.system('python 01_extraction_no_sellout.py')
+    os.system('python 00_P_extraction.py')
     print('No sellout data extracted!\n')
     
     print('Beginning extracting quality sellout customers...')

@@ -17,11 +17,11 @@ module = -1
 
 if module == 0 or module == -1:
     if init.lower() in ['s', 'y', 'si', 'yes']: 
-        if os.path.isfile('00_Extraction/Data/sellout_data.csv'):
-            os.remove('00_Extraction/Data/sellout_data.csv')
+        if os.path.isfile('00_Extraction/Data/TT_Sales_and_Invest.csv'):
+            os.remove('00_Extraction/Data/TT_Sales_and_Invest.csv')
             
-        if os.path.isfile('00_Extraction/Data/no_sellout_data.csv'):
-            os.remove('00_Extraction/Data/no_sellout_data.csv')
+        if os.path.isfile('00_Extraction/Data/P_Sales_and_Invest.csv'):
+            os.remove('00_Extraction/Data/P_Sales_and_Invest.csv')
             
         if os.path.isfile('00_Extraction/Data/customers_ok15.csv'):
             os.remove('00_Extraction/Data/customers_ok15.csv')
