@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.externals.joblib import dump, load
 from sklearn.linear_model import LinearRegression, SGDRegressor, Perceptron, PassiveAggressiveRegressor
 from sklearn.neighbors import KNeighborsRegressor
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, AdaBoostRegressor, BaggingRegressor
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, AdaBoostRegressor, BaggingRegressor, ExtraTreesRegressor
 from sklearn.metrics import mean_absolute_error, r2_score
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVR, LinearSVR
@@ -21,22 +21,22 @@ import time
 
 t1 = time.time()
 
-def eval_model(model, X, y, thresholds=[5]):
+def eval_model(model, X, y, thresholds=[5], verbose=1):
     y_pred = model.predict(X)
     y = np.power(y,3)
     y_pred = np.power(y_pred,3)
     porc_error = abs(y_pred - y)*100/y
     absolute_mean_error = mean_absolute_error(y, y_pred)
     porcentual_mean_error = np.mean(porc_error[porc_error != np.inf])
-    
-    print("\nTEST: Absolute Error:", absolute_mean_error)
-    print("Porcentual Error:", porcentual_mean_error)
-    print("STD Error:", np.std(abs(y - y_pred)))
-    print("R2 Score:", r2_score(y, y_pred))
+    if verbose:
+        print("\nTEST: Absolute Error:", absolute_mean_error)
+        print("Porcentual Error:", porcentual_mean_error)
+        print("STD Error:", np.std(abs(y - y_pred)))
+        print("R2 Score:", r2_score(y, y_pred))
     results = pd.DataFrame(np.array(y), columns = ['real'])
     results['pred'] = y_pred
     results['percentage_error'] = np.abs(results['pred'] - results['real'])*100/results['real'] 
-    results['absolute_error'] = np.abs(results['pred'] - results['real'])
+    results['absolute_error'] = np.abs(results['pred'] - results['real'])*100
     
     for threshold in thresholds:
         hits = 0
@@ -45,7 +45,8 @@ def eval_model(model, X, y, thresholds=[5]):
                 hits+=1
         
         porcentual_hits = hits*100/len(results)
-        print(str(porcentual_hits)+str("% registers are with less than"), str(threshold)+str("% of absolute error."))
+        if verbose:
+            print(str(porcentual_hits)+str("% registers are with less than"), str(threshold)+str("% of absolute error."))
         
     return results
 
@@ -96,24 +97,37 @@ z = np.abs(stats.zscore(X_train))
 X_train = X_train[(z < 3).all(axis=1)]
 y_train = y_train[(z < 3).all(axis=1)]
 
+################################################################################
+
+# STUDY BEST MODEL
+
+################################################################################
+study = False # DEVELOPING - NOT WORKING YET
+if study:
+    models = []
+    results = []
+    
+    models.append(LinearRegression())
+    
+    models.append(ltb.LGBMRegressor())
+    
+    models.append(BaggingRegressor(n_estimators=50, bootstrap_features=True, n_jobs=4, random_state=0, verbose=1))
+    
+    models.append(RandomForestRegressor(n_estimators = 100, n_jobs=4, random_state=0, verbose=1))
+    
+    models.append(xgb.XGBRegressor(objective ='reg:squarederror', colsample_bytree = 0.3, learning_rate = 0.1,
+                    max_depth = 4, alpha = 10, n_estimators = 200, verbosity=1))
+    
+    models.append(ExtraTreesRegressor(n_estimators = 100, n_jobs=4, verbose=1))
+    
+    for model in models:
+        print ("Training with:", str(model))
+        model.fit(X_train, y_train)
+        res_val = eval_model(model, X_val, y_val, [1, 2, 5, 10], verbose=0)
+        results.append(np.mean(res_val['absolute_error']))
+
+
 """
-model = LinearRegression()
-
-model = ltb.LGBMRegressor()
-
-model = SVR()
-
-model = BaggingRegressor(n_estimators=50, bootstrap_features=True, n_jobs=4, random_state=0, verbose=1)
-
-model = KNeighborsRegressor(n_neighbors=3, n_jobs=4)
-
-model = RandomForestRegressor(n_estimators = 100, n_jobs=4, random_state=0, verbose=1)
-
-model= xgb.XGBRegressor(objective ='reg:squarederror', colsample_bytree = 0.3, learning_rate = 0.1,
-                max_depth = 4, alpha = 10, n_estimators = 200, verbosity=1)
-
-
-model.fit(X_train, y_train)
 
 estimator = ltb.LGBMRegressor(verbose=1)
 
@@ -124,29 +138,43 @@ param_grid = {
 
 model = GridSearchCV(estimator, param_grid, cv=5)
 model.fit(X_train, y_train)
+
 """
 
-model = ltb.LGBMRegressor()
-model.fit(X_train, y_train)
-
-
-res_train = eval_model(model, X_train, y_train, [5, 10, 15])
-res_val = eval_model(model, X_val, y_val, [5, 10, 15])
+################################################################################
+if not study:
+    model = ltb.LGBMRegressor()
+    model.fit(X_train, y_train)
+    
+    
+    res_train = eval_model(model, X_train, y_train, [1, 2, 5, 10])
+    res_val = eval_model(model, X_val, y_val, [1, 2, 5, 10])
 
 # save model
 joblib.dump(model, 'model.pkl')
 
 
 # val samples distribution
-plt.hist(res_val['real'], range=[0,30], label='real', bins=20)
+plt.title('Real quota distribution')
+plt.hist(res_val['real'], range=[0,1], label='real', bins=20)
 plt.legend(loc = 'real')
-plt.hist(res_val['pred'], range=[0,30], label='pred', bins=20)
+plt.show()
+
+plt.title('Predicted quota distribution')
+plt.hist(res_val['pred'], range=[0,1], label='pred', color='orange', bins=20)
 plt.legend(loc = 'pred')
+plt.show()
 
 # Plot the highest percentage error 
-plt.hist(res_val.sort_values(by='percentage_error', ascending=False)['real'].iloc[:100])
-# Plot the highest percentage error 
-plt.hist(res_val.sort_values(by='absolute_error', ascending=False)['real'].iloc[:100])
+plt.title('Predicted top 100 highest quota error percentage deviation')
+plt.hist(res_val.sort_values(by='percentage_error', ascending=False)['percentage_error'].iloc[:100].replace([np.inf, -np.inf], np.nan).dropna())
+plt.show()
+
+
+# Plot the highest absolute error 
+plt.title('Predicted top 100 highest quota absolute error')
+plt.hist(res_val.sort_values(by='absolute_error', ascending=False)['absolute_error'].iloc[:100])
+plt.show()
 
 # Plot results
 res_sorted = res_val.sort_values(by='absolute_error', ascending=False).iloc[:100]
@@ -154,6 +182,7 @@ plt.plot(np.arange(len(res_sorted)), res_sorted['real'], label='real')
 plt.legend(loc = 'real')
 plt.plot(np.arange(len(res_sorted)), res_sorted['pred'], label='pred')
 plt.legend(loc = 'pred')
+plt.show()
 
 t2 = time.time()
 

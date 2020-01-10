@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Nov 25 18:18:09 2019
 
-@author: Jose Luis Gomez
-"""
 
 import os
 import sys
