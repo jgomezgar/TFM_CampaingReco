@@ -10,7 +10,7 @@ El código esta preparado para sel lanzado desde cualquier Shell de Python 3.6 d
 2.- **IMPORTANTE**:  Debido a que no es posible dar acceso directo a la BBDD, es necesario descargar los ficheros de datos desde el repositorio OneDrive y almacenarlos en la carpeta **"00_Extraction/Data"**: 
 
 https://imptob-my.sharepoint.com/:f:/r/personal/esmijlmog_intleurope_imptobnet_com/Documents/TFM_CampaingReco?csf=1
-(se trata de un vinculo restringido a las personas que me lo habeis solicitado)
+(se trata de un vinculo restringido a las personas <emails> autorizadas)
 
 3.- En One Drive Podeis encontrar los siguientes Ficheros:
 
