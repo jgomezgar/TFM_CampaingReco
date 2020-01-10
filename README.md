@@ -26,6 +26,10 @@ https://imptob-my.sharepoint.com/:f:/r/personal/esmijlmog_intleurope_imptobnet_c
 
 * **Seasonality_Base.csv**: (1,8 GB) contiene la extracción de la estacionalidad de cada tupla cliente-Marca, utilizado para obtener las ventas limpias de estacionalidad y poder comparar periodos. Generado desde *"00_Extraction/Scripts/03_seasonality.py"*. Ubicarlo en *"00_Extraction/Data"*
 
+* **Palancas de Inversion.twbx**: Dashboard realizado en Tableau. Permite seleccionar Marca, cluster y distintos tipos de inversión, mostrando en un gráfico como afectan a la Cuota de mercado.
+
+* **Prototipo Dashboard.xlsx**: Dashboard realizado en excel, a modo de prototipo.
+
 4.- Ejecución: **executions_workflow.py** Lanza todos los scripts y procesos necesarios, permite especificar la parte del codigo a ejecutar:
 
 * *00_Extraction*. Por defecto deshabilitada, ya que no existe acceso a la BBDD, para generar los CSVs.
