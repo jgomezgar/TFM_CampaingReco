@@ -11,7 +11,7 @@ select
 	isnull(SI_ITG_WSE/nullif(SI_MRKT_WSE,0),0) Baseline_SOM
 from [STAGING_2].[dbo].XXX_P_Sell_Periods_10d t
 
-where YEAR(t.CAL_DATE) >= 2016
+where t.CAL_DATE >= '2016-12-01'
 --order by  CUSTOMER_ID ,BrandFamily_ID, CAL_DATE
 )
 
