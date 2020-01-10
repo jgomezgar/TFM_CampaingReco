@@ -1,6 +1,9 @@
 # TFM_CampaingReco:
 
-## Instrucciones
+
+El código esta preparado para sel lanzado desde cualquier Shell de Python 3.6 desde  **executions_workflow.py**, aunque se ha desarrollado con Spyder, conda 3.6.8.
+
+## Instrucciones.
 
 1.- Es necesario conservar toda la estructura de carpetas, ya que los resultados de calculos intermedios se vuelcan a fichero.
 
@@ -30,4 +33,4 @@ https://imptob-my.sharepoint.com/:f:/r/personal/esmijlmog_intleurope_imptobnet_c
 * *02_Training*. 
 * *03_Evaluation*.
 
-5.- Limpieza de ficheros: **remove_data.py**, una vez ejecutado todo el código, borrara todos los ficheros de datos (o los indicados si se especifica). El motivo de este escripts es que si se lanza una segunda vez la ejecucion, los ficheros de la anterior ejecucion pueden ocupara mas de 30 GB y limitar el espacio en disco, para la nueva ejecución.
+5.- Limpieza de ficheros: **remove_data.py**, una vez ejecutado todo el código, borrará todos los ficheros de datos (o los indicados). El motivo de este scripts es que si se lanza una segunda vez la ejecución, los ficheros de la anterior ejecución pueden ocupar mas de 30 GB y limitar el espacio en disco, para la nueva ejecución.
