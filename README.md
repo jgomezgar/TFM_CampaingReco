@@ -11,17 +11,17 @@ https://imptob-my.sharepoint.com/:f:/r/personal/esmijlmog_intleurope_imptobnet_c
 
 3.- En One Drive Podeis encontrar los siguientes Ficheros:
 
-* **TT_Sales_and_Invest.csv**: (2,6 GB) Extracción de BBDD, Generado mediante *"00_Extraction/Scripts/00_TT_extraction.py"*, contiene los datos sobre los que se generará y testará el modelo (target).
+* **TT_Sales_and_Invest.csv**: (2,6 GB) Extracción de BBDD, Generado mediante *"00_Extraction/Scripts/00_TT_extraction.py"*, contiene los datos sobre los que se generará y testará el modelo (target). Ubicarlo en *"00_Extraction/Data"*.
 
-* **TT_Sales_and_Invest_REDUCIDO.csv**: (0,25 GB) Version reducida de la extracción, con la finalidad de testar el código incluido en *01_Preparation*, *02_Training*, *03_Evaluation*. Es necesario renombrar el fichero a  *TT_Sales_and_Invest.csv* , o cambiar el codigo en "00_Extraction/Scripts/00_TT_extraction.py".
+* **TT_Sales_and_Invest_REDUCIDO.csv**: (0,25 GB) Version reducida de la extracción, con la finalidad de testar el código incluido en *01_Preparation*, *02_Training*, *03_Evaluation*. Es necesario renombrar el fichero a  *TT_Sales_and_Invest.csv* , o cambiar el codigo en "00_Extraction/Scripts/00_TT_extraction.py". Optativo. Ubicarlo en *"00_Extraction/Data"*.
 
-* **P_Sales_and_Invest.csv**: (13,4 GB) Extracción de BBDD, Generado mediante *"00_Extraction/Scripts/00_P_extraction.py"*, contiene los datos sobre los que se aplicara el modelo generado, tienen la misma estructura que *TT_Sales_and_Invest* excepto que desconocemos las ventas a consumidor (target).
+* **P_Sales_and_Invest.csv**: (13,4 GB) Extracción de BBDD, Generado mediante *"00_Extraction/Scripts/00_P_extraction.py"*, contiene los datos sobre los que se aplicara el modelo generado, tienen la misma estructura que *TT_Sales_and_Invest* excepto que desconocemos las ventas a consumidor (target). Ubicarlo en *"00_Extraction/Data"*.
 
-* **P_Sales_and_Invest.7zip**: fichero comprimido en formarto 7zip (13,4GB-->1,2GB), si se opta por esta opción (recomendada), es necesario descomnprimir el fichero manualmente.
+* **P_Sales_and_Invest.7zip**: fichero comprimido en formarto 7zip (13,4GB-->1,2GB), si se opta por esta opción (recomendada), es necesario descomnprimir el fichero manualmente. Optativo. Ubicarlo en *"00_Extraction/Data"*.
 
-* **customers_ok15.csv**: contiene el listado de los cliente con ventas a consumidor y calidad de datos suficiente, utilizado para seleccionar las muestras de train y test. Generado desde *"00_Extraction/Scripts/02_extraction_sellout_ok15.py"*
+* **customers_ok15.csv**: contiene el listado de los cliente con ventas a consumidor y calidad de datos suficiente, utilizado para seleccionar las muestras de train y test. Generado desde *"00_Extraction/Scripts/02_extraction_sellout_ok15.py"*. Ubicarlo en *"00_Extraction/Data"*.
 
-* **Seasonality_Base.csv**: (1,8 GB) contiene la extracción de la estacionalidad de cada tupla cliente-Marca, utilizado para obtener las ventas limpias de estacionalidad y poder comparar periodos. Generado desde *"00_Extraction/Scripts/03_seasonality.py"*
+* **Seasonality_Base.csv**: (1,8 GB) contiene la extracción de la estacionalidad de cada tupla cliente-Marca, utilizado para obtener las ventas limpias de estacionalidad y poder comparar periodos. Generado desde *"00_Extraction/Scripts/03_seasonality.py"*. Ubicarlo en *"00_Extraction/Data"*
 
 4.- Ejecución: **executions_workflow.py** Lanza todos los scripts y procesos necesarios, permite especificar la parte del codigo a ejecutar:
 
